@@ -3,6 +3,7 @@ numpy
 matplotlib
 seaborn
 scipy
+soundfile
 librosa
 tqdm
 tabulate
