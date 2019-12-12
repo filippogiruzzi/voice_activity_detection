@@ -52,7 +52,11 @@ def file_iter(data_dir):
             flac_files = [x for x in os.listdir(sub_dir) if 'flac' in x]
             for fn in flac_files:
                 fp = os.path.join(data_dir, base_dir, sub_dir, fn)
-                signal, sr = sf.read(fp)
+                try:
+                    signal, sr = sf.read(fp)
+                except RuntimeError:
+                    print('!!! Skipped signal !!!')
+                    continue
                 yield signal, fn
 
 
@@ -87,6 +91,8 @@ def main(_):
                 # Preprocess signal & extract features
                 signal_to_process = np.copy(signal_input)
                 signal_to_process = np.float32(signal_to_process)
+                signal_to_process = np.add(signal_to_process, 1.0)
+                signal_to_process = np.divide(signal_to_process, 2.0)
                 features = extract_features(signal_to_process, freq=16000, n_mfcc=5, size=512, step=16)
 
                 # Prediction
