@@ -38,14 +38,12 @@ def main():
     label_dir = os.path.join(args.data_dir, 'labels/')
 
     files = [x.split('.')[0] for x in os.listdir(label_dir) if 'json' in x]
-    files = ['8230-279154-0026']
 
     for fn in files:
         # Read .flac
         print('\nReading .flac file ...')
         fn_ids = fn.split('-')
         flac_fp = os.path.join(data_dir, fn_ids[0], fn_ids[1], '{}.flac'.format(fn))
-        print(flac_fp)
         signal, sr = sf.read(flac_fp)
 
         # Read .json

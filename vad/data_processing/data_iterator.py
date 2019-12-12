@@ -7,7 +7,7 @@ import soundfile as sf
 from tabulate import tabulate
 
 
-def split_data(label_dir, split='0.7/0.15', random_seed=123456):
+def split_data(label_dir, split='0.7/0.15', random_seed=0):
     np.random.seed(random_seed)
     splits = [float(x) for x in split.split('/')]
     assert sum(splits) < 1.0, 'Wrong split values'
@@ -31,9 +31,11 @@ def file_iter(data_dir, label_dir, files):
     for fn in files:
         fn_ids = fn.split('-')
         flac_fp = os.path.join(data_dir, fn_ids[0], fn_ids[1], '{}.flac'.format(fn))
-        print(flac_fp)
-
-        signal, _ = sf.read(flac_fp)
+        try:
+            signal, _ = sf.read(flac_fp)
+        except RuntimeError:
+            print('!!! Skipped signal !!!')
+            continue
         labels = read_json(label_dir, fn)
         yield signal, labels['speech_segments'], fn
 
@@ -118,6 +120,12 @@ def main():
             #       data['end'],
             #       data['sub_segment_id'],
             #       data['sub_segment_len'])
+
+            # Drop 1/4th of speech signals to balance data
+            # if data['label'] == 1:
+            #     drop = np.random.randint(0, 4)
+            #     if drop > 0:
+            #         continue
 
             stats_dict[data_type][data['label']] += 1
             mini, maxi = stats_dict[data_type][2:]
