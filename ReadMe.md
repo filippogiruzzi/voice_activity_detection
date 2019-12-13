@@ -8,7 +8,7 @@ This project was designed for:
 
 Please install requirements & project:
 ```
-$ cd /path/to/project/snips_vad_test/
+$ cd /path/to/project/voice_activity_detection/
 $ pip3 install -r requirements.txt
 $ pip3 install -e . --user --upgrade
 ```
