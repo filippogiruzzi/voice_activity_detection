@@ -13,7 +13,9 @@ $ pip3 install -r requirements.txt
 $ pip3 install -e . --user --upgrade
 ```
 
-## 1. Goal
+## 1. Introduction
+
+##### 1.1 Goal
 
 The purpose of this project is to design and implement 
 a Voice Activity Detection algorithm based on Deep Learning.
@@ -21,6 +23,17 @@ a Voice Activity Detection algorithm based on Deep Learning.
 The designed solution is based on MFCC feature extraction and 
 a 1D-Resnet model that classifies whether a audio signal is 
 speech or noise.
+
+##### 1.2 Results
+
+| Model | Train acc. | Val acc. | Test acc. |
+| :---: |:---:| :---:| :---: |
+| 1D-Resnet | 99 % | 98 % | 97 % |
+
+Raw and post-processed inference results on a test audio signal are shown below.
+
+![alt text](pics/inference_raw.png "Raw VAD inference")
+![alt text](pics/inference_smooth.png "VAD inference with post-processing")
 
 ## 2. Project structure
 
