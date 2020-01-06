@@ -1,5 +1,8 @@
 # Voice Activity Detection project
 
+Keywords: Python, TensorFlow, Deep Learning, 
+Time Series classification
+
 ## 0. Installation
 
 This project was designed for:
@@ -15,16 +18,16 @@ $ pip3 install -e . --user --upgrade
 
 ## 1. Introduction
 
-##### 1.1 Goal
+### 1.1 Goal
 
 The purpose of this project is to design and implement 
-a Voice Activity Detection algorithm based on Deep Learning.
+a real-time Voice Activity Detection algorithm based on Deep Learning.
 
 The designed solution is based on MFCC feature extraction and 
 a 1D-Resnet model that classifies whether a audio signal is 
 speech or noise.
 
-##### 1.2 Results
+### 1.2 Results
 
 | Model | Train acc. | Val acc. | Test acc. |
 | :---: |:---:| :---:| :---: |
@@ -63,7 +66,7 @@ dataset in another way.
 $ cd /path/to/project/voice_activity_detection/vad/
 ```
 
-##### 4.1 Dataset automatic labeling
+### 4.1 Dataset automatic labeling
 
 ```
 $ python3 data_processing/librispeech_label_data.py --data_dir /path/to/LibriSpeech/test-clean/
@@ -74,7 +77,7 @@ $ python3 data_processing/librispeech_label_data.py --data_dir /path/to/LibriSpe
 This will record the annotations into `/path/to/LibriSpeech/labels/` as 
 `.json` files.
 
-##### 4.2 Record raw data to .tfrecord format
+### 4.2 Record raw data to .tfrecord format
 
 ```
 $ python3 data_processing/data_to_tfrecords.py --data_dir /path/to/LibriSpeech/
@@ -82,13 +85,13 @@ $ python3 data_processing/data_to_tfrecords.py --data_dir /path/to/LibriSpeech/
 
 This will record the splitted data to `.tfrecord` format in `/path/to/LibriSpeech/tfrecords/`
 
-##### 4.3 Train a CNN to classify Speech & Noise signals
+### 4.3 Train a CNN to classify Speech & Noise signals
 
 ```
 $ python3 training/train.py --data-dir /path/to/LibriSpeech/tfrecords/
 ```
 
-##### 4.4 Export trained model & run inference on Test set
+### 4.4 Export trained model & run inference on Test set
 
 ```
 $ python3 inference/export_model.py --model-dir /path/to/trained/model/dir/
@@ -100,4 +103,10 @@ $ python3 inference/inference.py --data_dir /path/to/LibriSpeech/
 
 The trained model will be recorded in `/path/to/LibriSpeech/tfrecords/models/resnet1d/`. 
 The exported model will be recorded inside this directory.
- 
+
+## 5. Resources
+
+* _Voice Activity Detection for Voice User Interface_, 
+[Medium](https://medium.com/linagoralabs/voice-activity-detection-for-voice-user-interface-2d4bb5600ee3)
+* _Deep learning for time series classifcation: a review_,
+Fawaz et al., [Arxiv](https://arxiv.org/abs/1809.04356)
