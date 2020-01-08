@@ -11,7 +11,9 @@ This project was designed for:
 
 Please install requirements & project:
 ```
-$ cd /path/to/project/voice_activity_detection/
+$ cd /path/to/project/
+$ git clone https://github.com/filippogiruzzi/voice_activity_detection.git
+$ cd voice_activity_detection/
 $ pip3 install -r requirements.txt
 $ pip3 install -e . --user --upgrade
 ```
@@ -67,6 +69,8 @@ $ cd /path/to/project/voice_activity_detection/vad/
 ```
 
 ### 4.1 Dataset automatic labeling
+
+Skip this subsection if you already have the `labels/` folder.
 
 ```
 $ python3 data_processing/librispeech_label_data.py --data_dir /path/to/LibriSpeech/test-clean/
