@@ -3,6 +3,15 @@
 Keywords: Python, TensorFlow, Deep Learning, 
 Time Series classification
 
+## Table of contents
+
+0. [ Installation ](#0-installation)
+1. [ Introduction ](#1-introduction)
+2. [ Project structure ](#2-project-structure)
+3. [ Dataset ](#3-dataset)
+4. [ Project usage ](#4-project-usage)
+5. [ Resources ](#5-resources)
+
 ## 0. Installation
 
 This project was designed for:
@@ -59,8 +68,7 @@ from audiobooks, and is well suited for Voice Activity Detection.
 
 I automatically annotated the `test-clean` set of the dataset with a 
 pretrained VAD model. Please send me an e-mail if you would like to 
-get the `labels/` folder for training and evaluation, or annotate the 
-dataset in another way.
+get the `labels/` folder or a pre-trained model for training and evaluation.
 
 ## 4. Project usage
 
