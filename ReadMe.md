@@ -127,4 +127,7 @@ The exported model will be recorded inside this directory.
 * _Voice Activity Detection for Voice User Interface_, 
 [Medium](https://medium.com/linagoralabs/voice-activity-detection-for-voice-user-interface-2d4bb5600ee3)
 * _Deep learning for time series classifcation: a review_,
-Fawaz et al., [Arxiv](https://arxiv.org/abs/1809.04356)
+Fawaz et al., 2018, [Arxiv](https://arxiv.org/abs/1809.04356)
+* _Time Series Classification from Scratch 
+with Deep Neural Networks: A Strong Baseline_, Wang et al., 2016,
+[Arxiv](https://arxiv.org/abs/1611.06455)
