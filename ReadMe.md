@@ -125,14 +125,14 @@ The exported model will be recorded inside this directory.
 
 ## 6. Todo
 
-*[ ] Compare Deep Learning model to a simple baseline
-*[ ] Train on full dataset
-*[ ] Improve data balancing
-*[ ] Add time series data augmentation
-*[ ] Study ROC curve & classification threshold
-*[ ] Add online inference
-*[ ] Evaluate quantitatively post-processing methods on the Test set
-*[ ] Add model description & training graphs
+- [ ] Compare Deep Learning model to a simple baseline
+- [ ] Train on full dataset
+- [ ] Improve data balancing
+- [ ] Add time series data augmentation
+- [ ] Study ROC curve & classification threshold
+- [ ] Add online inference
+- [ ] Evaluate quantitatively post-processing methods on the Test set
+- [ ] Add model description & training graphs
 
 ## 7. Resources
 
