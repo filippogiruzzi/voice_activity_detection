@@ -133,6 +133,7 @@ The exported model will be recorded inside this directory.
 - [ ] Add online inference
 - [ ] Evaluate quantitatively post-processing methods on the Test set
 - [ ] Add model description & training graphs
+- [ ] Add Google Colab demo
 
 ## 7. Resources
 
