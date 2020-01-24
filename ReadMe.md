@@ -16,7 +16,8 @@ Time Series classification
     5.2 [ Record raw data to .tfrecord format ](#52-record-raw-data-to-tfrecord-format)  
     5.3 [ Train a CNN to classify Speech & Noise signals ](#53-train-a-cnn-to-classify-speech--noise-signals)  
     5.4 [ Export trained model & run inference on Test set ](#54-export-trained-model--run-inference-on-test-set)  
-6. [ Resources ](#6-resources)
+6. [ Todo ](#6-todo)
+7. [ Resources ](#7-resources)
 
 ## 1. Installation
 
@@ -122,7 +123,18 @@ $ python3 inference/inference.py --data_dir /path/to/LibriSpeech/
 The trained model will be recorded in `/path/to/LibriSpeech/tfrecords/models/resnet1d/`. 
 The exported model will be recorded inside this directory.
 
-## 6. Resources
+## 6. Todo
+
+*[ ] Compare Deep Learning model to a simple baseline
+*[ ] Train on full dataset
+*[ ] Improve data balancing
+*[ ] Add time series data augmentation
+*[ ] Study ROC curve & classification threshold
+*[ ] Add online inference
+*[ ] Evaluate quantitatively post-processing methods on the Test set
+*[ ] Add model description & training graphs
+
+## 7. Resources
 
 * _Voice Activity Detection for Voice User Interface_, 
 [Medium](https://medium.com/linagoralabs/voice-activity-detection-for-voice-user-interface-2d4bb5600ee3)
