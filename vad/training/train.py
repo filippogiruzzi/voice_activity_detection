@@ -118,7 +118,7 @@ def main():
 
     # Evaluation on Test set
     elif mode == tf.estimator.ModeKeys.EVAL:
-        test_input_fn = data_input_fn(tfrecords_test,
+        test_input_fn = data_input_fn(tfrecords_val,
                                       batch_size=params['batch_size'],
                                       epochs=1,
                                       input_size=args.input_size,
