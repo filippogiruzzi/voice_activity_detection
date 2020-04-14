@@ -22,6 +22,7 @@ Time Series classification
 ## 1. Installation
 
 This project was designed for:
+* Ubuntu 18.04
 * Python 3.6
 * TensorFlow 1.12.0
 
@@ -74,8 +75,10 @@ The dataset contains approximately 1000 hours of 16kHz read English speech
 from audiobooks, and is well suited for Voice Activity Detection.
 
 I automatically annotated the `test-clean` set of the dataset with a 
-pretrained VAD model. Please send me an e-mail if you would like to 
-get the `labels/` folder or a pre-trained model for training and evaluation.
+pretrained VAD model.
+
+Please feel free to use the `labels/` folder and the pre-trained VAD model (only for inference) from this 
+[ link ](https://drive.google.com/open?id=1ZPQ6wnMhHeE7XP5dqpAEmBAryFzESlin).
 
 ## 5. Project usage
 
@@ -85,7 +88,8 @@ $ cd /path/to/project/voice_activity_detection/vad/
 
 ### 5.1 Dataset automatic labeling
 
-Skip this subsection if you already have the `labels/` folder.
+Skip this subsection if you already have the `labels/` folder, that contains annotations 
+from a different pre-trained model.
 
 ```
 $ python3 data_processing/librispeech_label_data.py --data_dir /path/to/LibriSpeech/test-clean/
