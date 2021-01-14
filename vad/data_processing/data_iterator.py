@@ -1,8 +1,8 @@
 import argparse
+import json
 import os
 
 import numpy as np
-import json
 import soundfile as sf
 from tabulate import tabulate
 
@@ -47,7 +47,8 @@ def file_iter(data_dir, label_dir, files):
 def data_iter(data_dir, label_dir, files):
     file_it = file_iter(data_dir, label_dir, files)
     for signal, labels, file_id in file_it:
-        start, end = 0, 0
+        # start, end = 0, 0
+        end = 0
         for seg in labels:
             next_start, next_end = seg["start_time"], seg["end_time"]
             # yield noise segment
@@ -68,7 +69,8 @@ def data_iter(data_dir, label_dir, files):
                     "segment": signal[next_start:next_end],
                     "label": 1,
                 }
-            start, end = next_start, next_end
+            # start, end = next_start, next_end
+            end = next_end
         # yield end of signal as noise
         yield {
             "id": file_id,

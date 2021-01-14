@@ -5,7 +5,10 @@ Time Series classification
 
 ## Table of contents
 
-1. [ Installation ](#1-installation)
+1. [ Installation ](#1-installation)  
+    1.1 [ Basic installation ](#11-basic-installation)  
+    1.2 [ Virtual environment installation ](#12-virtual-environment-installation)  
+    1.3 [ Docker installation ](#13-docker-installation)
 2. [ Introduction ](#2-introduction)  
     2.1 [ Goal ](#21-goal)  
     2.2 [ Results ](#22-results)  
@@ -26,14 +29,34 @@ This project was designed for:
 * Python 3.7.3
 * TensorFlow 1.15.4
 
-Please install requirements & project:
 ```
 $ cd /path/to/project/
 $ git clone https://github.com/filippogiruzzi/voice_activity_detection.git
 $ cd voice_activity_detection/
-$ pip3 install -r requirements.txt
-$ pip3 install -e . --user --upgrade
 ```
+
+### 1.1 Basic installation
+
+```
+$ pip3 install -r requirements.txt
+$ pip3 install -e .
+```
+
+## 1.2 Virtual environment installation
+
+## 1.3 Docker installation
+
+Build the docker image:
+```
+$ sudo make build
+```
+(This might take a while.)
+
+Run the docker image:
+```
+$ sudo make local
+```
+(Update `scrips/docker_local.sh` with your personal paths.)
 
 ## 2. Introduction
 

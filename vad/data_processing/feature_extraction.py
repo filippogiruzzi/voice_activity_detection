@@ -1,5 +1,5 @@
-import numpy as np
 import librosa
+import numpy as np
 
 
 def extract_features(signal, freq=16000, n_mfcc=5, size=512, step=16):

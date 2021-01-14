@@ -1,15 +1,14 @@
-import os
 import multiprocessing
-from absl import flags, app
+import os
 from copy import deepcopy
 
-from tqdm import tqdm
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
+from absl import app, flags
+from tqdm import tqdm
 
-from vad.data_processing.data_iterator import split_data, slice_iter
+from vad.data_processing.data_iterator import slice_iter, split_data
 from vad.data_processing.feature_extraction import extract_features
-
 
 flags.DEFINE_string(
     "data_dir", "/home/filippo/datasets/LibriSpeech/", "data directory path"
