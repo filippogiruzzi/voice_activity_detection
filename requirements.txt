@@ -1,5 +1,5 @@
 setuptools==41.0.0
-tensorflow-gpu==1.15.4
+tensorflow-gpu==2.4.0
 numpy==1.18.5
 librosa==0.7.0
 numba==0.48.0
