@@ -1,17 +1,16 @@
 import os
-from absl import flags, app
 import time
-
-import numpy as np
-import tensorflow as tf
 from collections import deque
-import seaborn as sns
-import matplotlib.pyplot as plt
 
-from vad.data_processing.data_iterator import split_data, file_iter
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+import tensorflow as tf
+from absl import app, flags
+
+from vad.data_processing.data_iterator import file_iter, split_data
 from vad.data_processing.feature_extraction import extract_features
 from vad.training.input_pipeline import FEAT_SIZE
-
 
 flags.DEFINE_string(
     "data_dir", "/home/filippo/datasets/LibriSpeech/", "path to data directory"

@@ -1,17 +1,16 @@
-import os
-from absl import flags, app
-import time
-
-import numpy as np
-import tensorflow as tf
-from collections import deque
-import soundfile as sf
 import json
-import seaborn as sns
+import os
+import time
+from collections import deque
+
 import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+import soundfile as sf
+import tensorflow as tf
+from absl import app, flags
 
 from vad.data_processing.feature_extraction import extract_features
-
 
 flags.DEFINE_string(
     "data_dir",

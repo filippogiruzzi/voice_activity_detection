@@ -1,12 +1,11 @@
-import os
 import argparse
 import glob
+import os
 
-import tensorflow as tf
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
-
+import tensorflow as tf
 
 FEAT_SIZE = (16, 65)
 

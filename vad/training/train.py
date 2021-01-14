@@ -1,17 +1,17 @@
-import os
-import glob
 import argparse
+import glob
 import logging
+import os
 import sys
 from datetime import datetime
 
-import numpy as np
-import tensorflow as tf
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
+import tensorflow as tf
 
-from vad.training.input_pipeline import data_input_fn
 from vad.training.estimator import VadEstimator
+from vad.training.input_pipeline import data_input_fn
 
 
 def main():

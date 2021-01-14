@@ -1,17 +1,15 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import tensorflow as tf
-from tensorflow.python.keras.models import Model
 from tensorflow.python.keras.layers import (
-    Conv1D,
-    BatchNormalization,
     Activation,
-    add,
+    BatchNormalization,
+    Conv1D,
     Dense,
     Flatten,
+    add,
 )
+from tensorflow.python.keras.models import Model
 
 
 class ResnetBlock(Model):
