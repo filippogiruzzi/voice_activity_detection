@@ -11,4 +11,5 @@ jobs:
       - name: Run linter and tests
         run: |
           make build
+          make local
           make check-code
