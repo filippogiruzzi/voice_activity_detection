@@ -22,9 +22,9 @@ Time Series classification
 ## 1. Installation
 
 This project was designed for:
-* Ubuntu 18.04
-* Python 3.6
-* TensorFlow 1.12.0
+* Ubuntu 20.04
+* Python 3.7.3
+* TensorFlow 1.15.4
 
 Please install requirements & project:
 ```
