@@ -28,3 +28,7 @@ build:
 # Run
 local:
 	$(SCRIPTS)/docker_local.sh
+
+# For tests & CI
+check-test-docker:
+	$(SCRIPTS)/check_tests_docker.sh
