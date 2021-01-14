@@ -43,7 +43,8 @@ RUN apt-get install -y \
     libssl-dev \
     libreadline-dev \
     libffi-dev \
-    libbz2-dev
+    libbz2-dev \
+    libsndfile1
 
 WORKDIR /voice_activity_detection
 RUN curl -L https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz | tar xfJ -
@@ -56,8 +57,8 @@ RUN ./configure --prefix=/usr \
     && ln -s /usr/bin/pip${PYTHON_SUFFIX} /usr/bin/pip
 
 RUN \
-  ln -f -s /usr/bin/python${PYTHON_SUFFIX} /usr/bin/python && \
-  ln -f -s /usr/bin/pip${PYTHON_SUFFIX} /usr/bin/pip
+    ln -f -s /usr/bin/python${PYTHON_SUFFIX} /usr/bin/python && \
+    ln -f -s /usr/bin/pip${PYTHON_SUFFIX} /usr/bin/pip
 
 RUN rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/* /var/tmp/*
