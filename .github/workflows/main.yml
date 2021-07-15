@@ -1,5 +1,5 @@
 
-name: CI - linter & tests
+name: CI - linters & tests
 
 on: [ push ]
 
@@ -10,5 +10,4 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run linter and tests
         run: |
-          make build
           make check-test-docker
