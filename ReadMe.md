@@ -29,7 +29,7 @@ This project was designed for:
 * Python 3.7.3
 * TensorFlow 1.15.4
 
-```
+```bash
 $ cd /path/to/project/
 $ git clone https://github.com/filippogiruzzi/voice_activity_detection.git
 $ cd voice_activity_detection/
@@ -55,13 +55,13 @@ $ pip install -e .
 ## 1.3 Docker installation
 
 Build the docker image:
-```
+```bash
 $ make build
 ```
 (This might take a while.)
 
 Run the docker image:
-```
+```bash
 $ make local-nobuild
 ```
 
@@ -112,7 +112,7 @@ Please feel free to use the `labels/` folder and the pre-trained VAD model (only
 
 ## 5. Project usage
 
-```
+```bash
 $ cd /path/to/project/voice_activity_detection/vad/
 ```
 
@@ -121,7 +121,7 @@ $ cd /path/to/project/voice_activity_detection/vad/
 Skip this subsection if you already have the `labels/` folder, that contains annotations 
 from a different pre-trained model.
 
-```
+```bash
 $ python data_processing/librispeech_label_data.py --data_dir /path/to/LibriSpeech/test-clean/
                                                     --exported_model /path/to/pretrained/model/
                                                     --out_dir /path/to/LibriSpeech/labels/
@@ -132,7 +132,7 @@ This will record the annotations into `/path/to/LibriSpeech/labels/` as
 
 ### 5.2 Record raw data to .tfrecord format
 
-```
+```bash
 $ python data_processing/data_to_tfrecords.py --data_dir /path/to/LibriSpeech/
 ```
 
@@ -140,13 +140,13 @@ This will record the splitted data to `.tfrecord` format in `/path/to/LibriSpeec
 
 ### 5.3 Train a CNN to classify Speech & Noise signals
 
-```
+```bash
 $ python training/train.py --data-dir /path/to/LibriSpeech/tfrecords/
 ```
 
 ### 5.4 Export trained model & run inference on Test set
 
-```
+```bash
 $ python inference/export_model.py --model-dir /path/to/trained/model/dir/
                                     --ckpt /path/to/trained/model/dir/
 $ python inference/inference.py --data_dir /path/to/LibriSpeech/
