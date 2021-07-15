@@ -4,6 +4,7 @@ import os
 
 import numpy as np
 import soundfile as sf
+from loguru import logger
 from tabulate import tabulate
 
 
@@ -34,11 +35,11 @@ def read_json(data_dir, fn):
 def file_iter(data_dir, label_dir, files):
     for fn in files:
         fn_ids = fn.split("-")
-        flac_fp = os.path.join(data_dir, fn_ids[0], fn_ids[1], "{}.flac".format(fn))
+        flac_fp = os.path.join(data_dir, fn_ids[0], fn_ids[1], f"{fn}.flac")
         try:
             signal, _ = sf.read(flac_fp)
         except RuntimeError:
-            print("!!! Skipped signal !!!")
+            logger.warning("!!! Skipped signal !!!")
             continue
         labels = read_json(label_dir, fn)
         yield signal, labels["speech_segments"], fn
@@ -112,11 +113,7 @@ def main():
     label_dir = os.path.join(args.data_dir, "labels/")
 
     train_fns, val_fns, test_fns = split_data(label_dir, split="0.7/0.15")
-    print(
-        "\nTrain: {} | Val: {} | Test: {}".format(
-            len(train_fns), len(val_fns), len(test_fns)
-        )
-    )
+    logger.info(f"Train: {train_fns} | Val: {val_fns} | Test: {test_fns}")
 
     # Some stats to get the number of noise & speech segments, min & max values
     data_dict = {"train": train_fns, "val": val_fns, "test": test_fns}
@@ -157,7 +154,7 @@ def main():
             ]
         )
 
-    print(
+    logger.info(
         tabulate(
             headers=[
                 "Data type",

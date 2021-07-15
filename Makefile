@@ -1,7 +1,10 @@
 ROOT := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 SCRIPTS := $(ROOT)scripts
 
-# Clean
+
+##################################################
+#   Clean docker images, containers & pycache    #
+##################################################
 clean-docker-images:
 	$(eval dangling := $(shell docker images -f dangling=true -q))
 	-docker rmi $(dangling)
@@ -17,18 +20,26 @@ clean-py:
 
 clean: clean-docker clean-py
 
-# Code formatting
+##################################################
+#                 Code formatting                #
+##################################################
 check-code:
 	$(SCRIPTS)/check_code.sh
 
-# Build
+##################################################
+#                 Docker commands                #
+##################################################
 build:
 	$(SCRIPTS)/docker_build.sh
 
-# Run
-local:
+local: build
 	$(SCRIPTS)/docker_local.sh
 
-# For tests & CI
-check-test-docker:
+local-nobuild:
+	$(SCRIPTS)/docker_local.sh
+
+##################################################
+#                    CI & tests                  #
+##################################################
+check-test-docker: build
 	$(SCRIPTS)/check_tests_docker.sh

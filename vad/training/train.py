@@ -74,9 +74,9 @@ def main():
     assert len(args.n_kernels.split("-")) == 3, "3 values required for --n-kernels"
     assert len(args.n_fc_units.split("-")) == 2, "2 values required --n-fc-units"
 
-    tfrecords_train = glob.glob("{}train/*.tfrecord".format(args.data_dir))
-    tfrecords_val = glob.glob("{}val/*.tfrecord".format(args.data_dir))
-    tfrecords_test = glob.glob("{}test/*.tfrecord".format(args.data_dir))
+    tfrecords_train = glob.glob(f"{args.data_dir}train/*.tfrecord")
+    tfrecords_val = glob.glob(f"{args.data_dir}val/*.tfrecord")
+    tfrecords_test = glob.glob(f"{args.data_dir}test/*.tfrecord")
 
     logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
     logger = logging.getLogger(__name__)
@@ -85,9 +85,7 @@ def main():
     tf.logging.set_verbosity(tf.logging.INFO)
 
     if not args.model_dir:
-        save_dir = "{}models/{}/{}/".format(
-            args.data_dir, args.model, datetime.now().isoformat()
-        )
+        save_dir = f"{args.data_dir}models/{args.model}/{datetime.now().isoformat()}/"
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
     else:
@@ -158,9 +156,9 @@ def main():
         )
 
         for epoch_num in range(params["epochs"]):
-            logger.info("Training for epoch {} ...".format(epoch_num))
+            logger.info(f"Training for epoch {epoch_num} ...")
             estimator.train(input_fn=train_input_fn)
-            logger.info("Evaluation for epoch {} ...".format(epoch_num))
+            logger.info(f"Evaluation for epoch {epoch_num} ...")
             estimator.evaluate(input_fn=eval_input_fn)
 
     # Evaluation on Test set
@@ -204,7 +202,7 @@ def main():
                 x=[i for i in range(len(signal_input[:, 0]))],
                 y=signal_input[:, 0],
             )
-            plt.title("Signal = {}".format(classes[int(np.round(pred))]))
+            plt.title(f"Signal = {classes[int(np.round(pred))]}")
             plt.xlabel("Time (num. points)")
             plt.ylabel("Amplitude")
             plt.show()

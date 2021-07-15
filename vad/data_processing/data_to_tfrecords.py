@@ -5,6 +5,7 @@ from copy import deepcopy
 import numpy as np
 import tensorflow as tf
 from absl import app, flags
+from loguru import logger
 from tqdm import tqdm
 
 from vad.data_processing.data_iterator import slice_iter, split_data
@@ -85,12 +86,10 @@ def pool_create_tf_example(args):
 
 def write_tfrecords(path, dataiter, num_shards=256, nmax=-1):
     writers = [
-        tf.python_io.TFRecordWriter(
-            "{}{:05d}_{:05d}.tfrecord".format(path, i, num_shards)
-        )
+        tf.python_io.TFRecordWriter(f"{path}{i:05d}_{num_shards:05d}.tfrecord")
         for i in range(num_shards)
     ]
-    print("\nWriting to output path: {}".format(path))
+    logger.info(f"Writing to output path: {path}")
     pool = multiprocessing.Pool()
     counter = 0
     for i, tf_example in tqdm(
@@ -120,7 +119,7 @@ def write_tfrecords(path, dataiter, num_shards=256, nmax=-1):
     pool.close()
     for writer in writers:
         writer.close()
-    print("Recorded {} signals".format(counter))
+    logger.info(f"Recorded {counter} signals")
 
 
 def create_tfrecords(
@@ -144,8 +143,9 @@ def create_tfrecords(
     # Split data on files
     train, val, test = split_data(label_dir, split, random_seed=0)
 
-    print("\nTotal files: {}".format(len(train) + len(val) + len(test)))
-    print("Train/val/test split: {}/{}/{}".format(len(train), len(val), len(test)))
+    tot_files = len(train) + len(val) + len(test)
+    logger.info(f"Total files: {tot_files}")
+    logger.info(f"Train/val/test split: {len(train)}/{len(val)}/{len(test)}")
     train_it = slice_iter(data_dir, label_dir, train, seq_len)
     val_it = slice_iter(data_dir, label_dir, val, seq_len)
     test_it = slice_iter(data_dir, label_dir, test, seq_len)
@@ -153,21 +153,21 @@ def create_tfrecords(
     # Write data to tfrecords format
     nmax = 100 if debug else -1
     if "train" in data_type:
-        print("\nWriting train tfrecords ...")
+        logger.info("Writing train tfrecords ...")
         train_path = os.path.join(output_path, "train/")
         if not tf.gfile.IsDirectory(train_path):
             tf.gfile.MakeDirs(train_path)
         write_tfrecords(train_path, train_it, num_shards, nmax=nmax)
 
     if "val" in data_type:
-        print("\nWriting val tfrecords ...")
+        logger.info("Writing val tfrecords ...")
         val_path = os.path.join(output_path, "val/")
         if not tf.gfile.IsDirectory(val_path):
             tf.gfile.MakeDirs(val_path)
         write_tfrecords(val_path, val_it, num_shards, nmax=nmax)
 
     if "test" in data_type:
-        print("\nWriting test tfrecords ...")
+        logger.info("Writing test tfrecords ...")
         test_path = os.path.join(output_path, "test/")
         if not tf.gfile.IsDirectory(test_path):
             tf.gfile.MakeDirs(test_path)

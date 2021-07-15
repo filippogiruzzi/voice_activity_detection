@@ -29,7 +29,7 @@ This project was designed for:
 * Python 3.7.3
 * TensorFlow 1.15.4
 
-```
+```bash
 $ cd /path/to/project/
 $ git clone https://github.com/filippogiruzzi/voice_activity_detection.git
 $ cd voice_activity_detection/
@@ -37,9 +37,17 @@ $ cd voice_activity_detection/
 
 ### 1.1 Basic installation
 
+:warning: It is recommended to use virtual environments !
+
+```bash
+$ pyenv install 3.7.3
+$ pyenv virtualenv 3.7.3 vad-venv
+$ pyenv activate vad-venv
 ```
-$ pip3 install -r requirements.txt
-$ pip3 install -e .
+
+```bash
+$ pip install -r requirements.txt
+$ pip install -e .
 ```
 
 ## 1.2 Virtual environment installation
@@ -47,16 +55,15 @@ $ pip3 install -e .
 ## 1.3 Docker installation
 
 Build the docker image:
-```
-$ sudo make build
+```bash
+$ make build
 ```
 (This might take a while.)
 
 Run the docker image:
+```bash
+$ make local-nobuild
 ```
-$ sudo make local
-```
-(Update `scrips/docker_local.sh` with your personal paths.)
 
 ## 2. Introduction
 
@@ -105,7 +112,7 @@ Please feel free to use the `labels/` folder and the pre-trained VAD model (only
 
 ## 5. Project usage
 
-```
+```bash
 $ cd /path/to/project/voice_activity_detection/vad/
 ```
 
@@ -114,8 +121,8 @@ $ cd /path/to/project/voice_activity_detection/vad/
 Skip this subsection if you already have the `labels/` folder, that contains annotations 
 from a different pre-trained model.
 
-```
-$ python3 data_processing/librispeech_label_data.py --data_dir /path/to/LibriSpeech/test-clean/
+```bash
+$ python data_processing/librispeech_label_data.py --data_dir /path/to/LibriSpeech/test-clean/
                                                     --exported_model /path/to/pretrained/model/
                                                     --out_dir /path/to/LibriSpeech/labels/
 ```
@@ -125,24 +132,24 @@ This will record the annotations into `/path/to/LibriSpeech/labels/` as
 
 ### 5.2 Record raw data to .tfrecord format
 
-```
-$ python3 data_processing/data_to_tfrecords.py --data_dir /path/to/LibriSpeech/
+```bash
+$ python data_processing/data_to_tfrecords.py --data_dir /path/to/LibriSpeech/
 ```
 
 This will record the splitted data to `.tfrecord` format in `/path/to/LibriSpeech/tfrecords/`
 
 ### 5.3 Train a CNN to classify Speech & Noise signals
 
-```
-$ python3 training/train.py --data-dir /path/to/LibriSpeech/tfrecords/
+```bash
+$ python training/train.py --data-dir /path/to/LibriSpeech/tfrecords/
 ```
 
 ### 5.4 Export trained model & run inference on Test set
 
-```
-$ python3 inference/export_model.py --model-dir /path/to/trained/model/dir/
+```bash
+$ python inference/export_model.py --model-dir /path/to/trained/model/dir/
                                     --ckpt /path/to/trained/model/dir/
-$ python3 inference/inference.py --data_dir /path/to/LibriSpeech/
+$ python inference/inference.py --data_dir /path/to/LibriSpeech/
                                  --exported_model /path/to/exported/model/
                                  --smoothing
 ```

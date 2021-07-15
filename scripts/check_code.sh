@@ -15,7 +15,7 @@ isort .
 echo "> Running black"
 black . 
 echo "> Running flake8"
-flake8
+flake8 .
 
 echo
 echo "Code is ready to be pushed"

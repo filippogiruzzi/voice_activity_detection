@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import tensorflow as tf
+from loguru import logger
 
 FEAT_SIZE = (16, 65)
 
@@ -127,7 +128,7 @@ def main():
 
     classes = ["Noise", "Speech"]
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-    tfrecords = glob.glob("{}{}/*.tfrecord".format(args.data_dir, args.data_type))
+    tfrecords = glob.glob(f"{args.data_dir}{args.data_type}/*.tfrecord")
     dataset = get_dataset(
         tfrecords,
         batch_size=32,
@@ -137,7 +138,7 @@ def main():
         shuffle=False,
         fake_input=False,
     )
-    print("\nDataset out types {}".format(dataset.output_types))
+    logger.info(f"Dataset out types {dataset.output_types}")
 
     batch = dataset.make_one_shot_iterator().get_next()
     sess = tf.Session()
@@ -155,11 +156,13 @@ def main():
             signal_input = data[0]["subsegment/signal"]
             label = data[1]["subsegment/label"]
 
-            print("\nBatch nb {}".format(batch_nb))
+            logger.info(f"Batch nb {batch_nb}")
             for i in range(len(signal_input)):
                 class_name = classes[int(np.round(label[i]))]
-                print("\nClass: {}".format(class_name))
-                print(signal_id[i].decode(), start[i], end[i], sub_id[i], length[i])
+                logger.info(f"Class: {class_name}")
+                logger.info(
+                    signal_id[i].decode(), start[i], end[i], sub_id[i], length[i]
+                )
 
                 # Plot signal
                 plt.figure(figsize=(15, 10))
@@ -167,7 +170,7 @@ def main():
                 sns.lineplot(
                     x=[i for i in range(len(signal_input[i]))], y=signal_input[i]
                 )
-                plt.title("Signal = {}".format(class_name), size=20)
+                plt.title(f"Signal = {class_name}", size=20)
                 plt.xlabel("Time (num. points)", size=20)
                 plt.ylabel("Amplitude", size=20)
                 plt.xticks(size=15)

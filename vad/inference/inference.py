@@ -7,6 +7,7 @@ import numpy as np
 import seaborn as sns
 import tensorflow as tf
 from absl import app, flags
+from loguru import logger
 
 from vad.data_processing.data_iterator import file_iter, split_data
 from vad.data_processing.feature_extraction import extract_features
@@ -34,7 +35,7 @@ def visualize_predictions(signal, fn, preds, sr=16000):
     for predictions in preds:
         color = "r" if predictions[2] == 0 else "g"
         ax.axvspan((predictions[0]) / sr, predictions[1] / sr, alpha=0.5, color=color)
-    plt.title("Prediction on signal {}, speech in green".format(fn), size=20)
+    plt.title(f"Prediction on signal {fn}, speech in green", size=20)
     plt.xlabel("Time (s)", size=20)
     plt.ylabel("Amplitude", size=20)
     plt.xticks(size=15)
@@ -97,7 +98,7 @@ def main(_):
     with tf.Session() as sess:
         for signal, labels, fn in file_it:
             sess.run(init)
-            print("\nPrediction on file {} ...".format(fn))
+            logger.info(f"Prediction on file {fn} ...")
             signal_input = deque(signal[: FLAGS.seq_len].tolist(), maxlen=FLAGS.seq_len)
 
             preds, pred_time = [], []
@@ -124,10 +125,8 @@ def main(_):
                 end = time.time()
                 dt = end - start
                 pred_time.append(dt)
-                print(
-                    "Prediction = {} | proba = {:.2f} | time = {:.2f} s".format(
-                        speech_pred, speech_prob[0], dt
-                    )
+                logger.info(
+                    f"Prediction = {speech_pred} | proba = {speech_prob[0]:.2f} | time = {dt:.2f} s"
                 )
 
                 # For visualization
@@ -141,9 +140,7 @@ def main(_):
                 )
                 pointer += FLAGS.seq_len + FLAGS.stride
 
-            print(
-                "Average prediction time = {:.2f} ms".format(np.mean(pred_time) * 1e3)
-            )
+            logger.info(f"Average prediction time = {np.mean(pred_time) * 1e3:.2f} ms")
 
             # Smoothing & hangover
             if FLAGS.smoothing:
