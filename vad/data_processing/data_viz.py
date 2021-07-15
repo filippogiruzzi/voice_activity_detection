@@ -46,7 +46,7 @@ def main():
 
     for fn in files:
         # Read .flac
-        logger.info("\nReading .flac file ...")
+        logger.info("Reading .flac file ...")
         fn_ids = fn.split("-")
         flac_fp = os.path.join(data_dir, fn_ids[0], fn_ids[1], f"{fn}.flac")
         signal, sr = sf.read(flac_fp)

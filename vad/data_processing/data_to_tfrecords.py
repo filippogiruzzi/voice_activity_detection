@@ -153,21 +153,21 @@ def create_tfrecords(
     # Write data to tfrecords format
     nmax = 100 if debug else -1
     if "train" in data_type:
-        logger.info("\nWriting train tfrecords ...")
+        logger.info("Writing train tfrecords ...")
         train_path = os.path.join(output_path, "train/")
         if not tf.gfile.IsDirectory(train_path):
             tf.gfile.MakeDirs(train_path)
         write_tfrecords(train_path, train_it, num_shards, nmax=nmax)
 
     if "val" in data_type:
-        logger.info("\nWriting val tfrecords ...")
+        logger.info("Writing val tfrecords ...")
         val_path = os.path.join(output_path, "val/")
         if not tf.gfile.IsDirectory(val_path):
             tf.gfile.MakeDirs(val_path)
         write_tfrecords(val_path, val_it, num_shards, nmax=nmax)
 
     if "test" in data_type:
-        logger.info("\nWriting test tfrecords ...")
+        logger.info("Writing test tfrecords ...")
         test_path = os.path.join(output_path, "test/")
         if not tf.gfile.IsDirectory(test_path):
             tf.gfile.MakeDirs(test_path)
