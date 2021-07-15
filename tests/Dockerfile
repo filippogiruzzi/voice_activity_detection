@@ -8,3 +8,4 @@ WORKDIR /voice_activity_detection
 COPY . .
 
 CMD ["bash", "-c", "isort --check ./ && black --check ./ && flake8 ./"]
+# CMD ["bash", "-c", "isort --check ./ && black --check ./ && flake8 ./ && pep257 ./"]
