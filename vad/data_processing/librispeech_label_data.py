@@ -9,6 +9,7 @@ import seaborn as sns
 import soundfile as sf
 import tensorflow as tf
 from absl import app, flags
+from loguru import logger
 
 from vad.data_processing.feature_extraction import extract_features
 
@@ -41,7 +42,7 @@ def visualize_predictions(signal, fn, preds):
         ax.axvspan(
             (predictions[0]) / 16000, predictions[1] / 16000, alpha=0.5, color=color
         )
-    plt.title("Prediction on signal {}, speech in green".format(fn), size=20)
+    plt.title(f"Prediction on signal {fn}, speech in green", size=20)
     plt.xlabel("Time (s)", size=20)
     plt.ylabel("Amplitude", size=20)
     plt.xticks(size=15)
@@ -60,7 +61,7 @@ def file_iter(data_dir):
                 try:
                     signal, sr = sf.read(fp)
                 except RuntimeError:
-                    print("!!! Skipped signal !!!")
+                    logger.warning("!!! Skipped signal !!!")
                     continue
                 yield signal, fn
 
@@ -87,7 +88,7 @@ def main(_):
     with tf.Session() as sess:
         for signal, fn in file_it:
             sess.run(init)
-            print("\nPrediction on file {} ...".format(fn))
+            logger.info(f"Prediction on file {fn} ...")
             signal_input = deque(signal[:1024].tolist(), maxlen=1024)
 
             labels = {"speech_segments": []}
@@ -118,10 +119,8 @@ def main(_):
                 dt = end - start
                 pred_time.append(dt)
                 if FLAGS.viz:
-                    print(
-                        "Prediction = {} | proba = {:.2f} | time = {:.2f} s".format(
-                            speech_pred, speech_prob[0], dt
-                        )
+                    logger.info(
+                        f"Prediction = {speech_pred} | proba = {speech_prob[0]:.2f} | time = {dt:.2f} s"
                     )
 
                 # For visualization
@@ -137,9 +136,7 @@ def main(_):
                 signal_input.extend(signal[pointer + 1 : pointer + 1 + 1024])
                 pointer += 1024 + 1
 
-            print(
-                "Average prediction time = {:.2f} ms".format(np.mean(pred_time) * 1e3)
-            )
+            logger.info(f"Average prediction time = {np.mean(pred_time) * 1e3:.2f} ms")
 
             # Visualization
             if FLAGS.viz:
@@ -147,15 +144,15 @@ def main(_):
 
             # Record labels to .json
             if not FLAGS.viz:
-                out_fn = "{}.json".format(fn.split(".")[0])
+                base_name = fn.split(".")[0]
+                out_fn = f"{base_name}.json"
                 out_fp = os.path.join(FLAGS.out_dir, out_fn)
                 with open(out_fp, "w") as f:
                     json.dump(labels, f)
-                print(
-                    "{} predictions recorded to {}".format(
-                        len(labels["speech_segments"]), FLAGS.out_dir
-                    )
-                )
+
+                nb_preds = len(labels["speech_segments"])
+                output_dir = FLAGS.out_dir
+                logger.info(f"{nb_preds} predictions recorded to {output_dir}")
 
 
 if __name__ == "__main__":
