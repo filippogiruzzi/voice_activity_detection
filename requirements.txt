@@ -1,6 +1,6 @@
 # Main requirements
 setuptools==41.0.0
-tensorflow-gpu==1.15.4
+tensorflow-gpu==2.5.1
 numpy==1.18.5
 librosa==0.7.0
 numba==0.48.0
