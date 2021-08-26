@@ -4,8 +4,10 @@ name: CI - linters & tests
 on: [ push ]
 
 jobs:
-  build:
+  ci:
+    name: Continuous Integration
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
       - name: Run linter and tests
