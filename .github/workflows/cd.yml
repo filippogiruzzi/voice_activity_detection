@@ -1,0 +1,32 @@
+name: CD - deploy do DockerHub
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Docker login
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    
+    - name: Docker build, tag & push to DockerHub
+      env:
+        DOCKER_REPO: tf-vad
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build . -t $DOCKER_USER/$DOCKER_REPO:$IMAGE_TAG
+        docker push $DOCKER_USER/$DOCKER_REPO:$IMAGE_TAG
