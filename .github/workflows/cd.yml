@@ -4,7 +4,8 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master ]
+    types: [ closed ]
+    branches: master
 
 jobs:
 
@@ -25,6 +26,7 @@ jobs:
     
     - name: Docker build, tag & push to DockerHub
       env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_REPO: tf-vad
         IMAGE_TAG: ${{ github.sha }}
       run: |
