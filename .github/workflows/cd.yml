@@ -32,3 +32,5 @@ jobs:
       run: |
         docker build . -t $DOCKER_USER/$DOCKER_REPO:$IMAGE_TAG
         docker push $DOCKER_USER/$DOCKER_REPO:$IMAGE_TAG
+        docker tag $DOCKER_USER/$DOCKER_REPO:$IMAGE_TAG $DOCKER_USER/$DOCKER_REPO:latest
+        docker push $DOCKER_USER/$DOCKER_REPO:latest
