@@ -1,3 +1,4 @@
+"""Main entrypoint to train Deep Learning VAD models."""
 import argparse
 import glob
 import logging
@@ -15,6 +16,7 @@ from vad.training.input_pipeline import data_input_fn
 
 
 def main():
+    """Main function to train Deep Learning VAD models."""
     parser = argparse.ArgumentParser(description="train CNN for VAD")
     parser.add_argument(
         "--data-dir",

@@ -1,3 +1,6 @@
+"""
+Global data iterator that reads & pre-processed input data to be recorded as a TFRecord dataset.
+"""
 import argparse
 import json
 import os
@@ -9,6 +12,16 @@ from tabulate import tabulate
 
 
 def split_data(label_dir, split="0.7/0.15", random_seed=0):
+    """Split a directory of files into train / val / test files.
+
+    Args:
+        label_dir (str): path to directory containing label files
+        split (str, optional): train / val split. Defaults to "0.7/0.15".
+        random_seed (int, optional): random see value. Defaults to 0.
+
+    Returns:
+        train_fns, val_fns, test_fns (list, list, list): train / val / test files lists
+    """
     np.random.seed(random_seed)
     splits = [float(x) for x in split.split("/")]
     assert sum(splits) < 1.0, "Wrong split values"
@@ -26,6 +39,15 @@ def split_data(label_dir, split="0.7/0.15", random_seed=0):
 
 
 def read_json(data_dir, fn):
+    """Utilitary function to read a .json file.
+
+    Args:
+        data_dir (str): path to parent directory containing the file to read
+        fn (str): name of the file to read, without the extension
+
+    Returns:
+        labels (dict): .json file content
+    """
     fp = os.path.join(data_dir, fn + ".json")
     with open(fp, "r") as f:
         labels = json.load(f)
@@ -33,6 +55,16 @@ def read_json(data_dir, fn):
 
 
 def file_iter(data_dir, label_dir, files):
+    """File iterator to yield signal+label file.
+
+    Args:
+        data_dir (str): path to main data directory containing audio files
+        label_dir (str): path to directory containing label files
+        files (list): list of files to read
+
+    Yields:
+        signal, label, fn (np.ndarray, list, str): audio signal, label list and file name without extension
+    """
     for fn in files:
         fn_ids = fn.split("-")
         flac_fp = os.path.join(data_dir, fn_ids[0], fn_ids[1], f"{fn}.flac")
@@ -41,11 +73,24 @@ def file_iter(data_dir, label_dir, files):
         except RuntimeError:
             logger.warning("!!! Skipped signal !!!")
             continue
+
         labels = read_json(label_dir, fn)
-        yield signal, labels["speech_segments"], fn
+        label = labels["speech_segments"]
+
+        yield signal, label, fn
 
 
 def data_iter(data_dir, label_dir, files):
+    """Data iterator to yield an audio segment with a constant label (noise or audio).
+
+    Args:
+        data_dir (str): path to main data directory containing audio files
+        label_dir (str): path to directory containing label files
+        files (list): list of files to read
+
+    Yields:
+        (dict): dict containing info about each audio segment
+    """
     file_it = file_iter(data_dir, label_dir, files)
     for signal, labels, file_id in file_it:
         # start, end = 0, 0
@@ -83,6 +128,17 @@ def data_iter(data_dir, label_dir, files):
 
 
 def slice_iter(data_dir, label_dir, files, seq_len=1024):
+    """Data iterator to yield and fixed length audio segment, given a sliding window size.
+
+    Args:
+        data_dir (str): path to main data directory containing audio files
+        label_dir (str): path to directory containing label files
+        files (list): list of files to read
+        seq_len (int, optional): size of the sliding window. Defaults to 1024.
+
+    Yields:
+        (dict): dict containing info about each audio segment
+    """
     data_it = data_iter(data_dir, label_dir, files)
     # Slice segment with length seq_len & no overlap @Todo: add overlap with stride s < seq_len
     for data in data_it:
@@ -103,6 +159,7 @@ def slice_iter(data_dir, label_dir, files, seq_len=1024):
 
 
 def main():
+    """Temporary main function. Should be move to tests."""
     parser = argparse.ArgumentParser(description="data iterator to loop through data")
     parser.add_argument(
         "--data-dir", type=str, default="/home/filippo/datasets/LibriSpeech/"

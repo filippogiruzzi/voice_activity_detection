@@ -1,3 +1,4 @@
+"""Converts raw audio signal to a dataset of TFRecords for training."""
 import multiprocessing
 import os
 from copy import deepcopy
@@ -25,32 +26,100 @@ tf.logging.set_verbosity(tf.logging.INFO)
 
 
 def int64_feature(value):
+    """Utilitary function to build a TF feature from an int.
+
+    Args:
+        value ([int]): value to convert to a TF feature
+
+    Returns:
+        (tf.core.example.feature_pb2.Feature): int TF feature
+    """
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
 
 def int64_list_feature(value):
+    """Utilitary function to build a TF feature from a list of ints.
+
+    Args:
+        value (list): value to convert to a TF feature
+
+    Returns:
+        (tf.core.example.feature_pb2.Feature): list of ints TF feature
+    """
     return tf.train.Feature(int64_list=tf.train.Int64List(value=value))
 
 
 def bytes_feature(value):
+    """Utilitary function to build a TF feature from a byte.
+
+    Args:
+        value (byte): value to convert to a TF feature
+
+    Returns:
+        (tf.core.example.feature_pb2.Feature): byte TF feature
+    """
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
 
 def bytes_list_feature(value):
+    """Utilitary function to build a TF feature from a list of bytes.
+
+    Args:
+        value (list): value to convert to a TF feature
+
+    Returns:
+        (tf.core.example.feature_pb2.Feature): list of bytes TF feature
+    """
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=value))
 
 
 def float_feature(value):
+    """Utilitary function to build a TF feature from a float.
+
+    Args:
+        value (list): value to convert to a TF feature
+
+    Returns:
+        (tf.core.example.feature_pb2.Feature): float TF feature
+    """
     return tf.train.Feature(float_list=tf.train.FloatList(value=[value]))
 
 
 def float_list_feature(value):
+    """Utilitary function to build a TF feature from a list of floats.
+
+    Args:
+        value (list): value to convert to a TF feature
+
+    Returns:
+        (tf.core.example.feature_pb2.Feature): list of floats TF feature
+    """
     return tf.train.Feature(float_list=tf.train.FloatList(value=value))
 
 
 def create_tf_example(
-    file_id, start, end, sub_segment, sub_segment_id, sub_segment_len, label
+    file_id,
+    start,
+    end,
+    sub_segment,
+    sub_segment_id,
+    sub_segment_len,
+    label,
 ):
+    """Build a TF training example from raw data.
+
+    Args:
+        file_id (int): file ID
+        start (int): global audio segment start frame
+        end (int): global audio segment end frame
+        sub_segment (np.ndarray): sub audio segment signal
+        sub_segment_id (int): sub audio segment ID
+        sub_segment_len (int): sub audio segment length
+        label (int): sub audio segment ID (0 or 1)
+
+    Returns:
+        example (tf.core.example.example_pb2.Example): TF training example
+    """
     # Drop 1/4th of speech signals to balance data
     if label == 1:
         drop = np.random.randint(0, 4)
@@ -81,10 +150,26 @@ def create_tf_example(
 
 
 def pool_create_tf_example(args):
+    """Utilitary function to use multi-processing to create TF examples.
+
+    Args:
+        args (tuple): create_tf_example function args
+
+    Returns:
+        (tf.core.example.example_pb2.Example): TF training example
+    """
     return create_tf_example(*args)
 
 
 def write_tfrecords(path, dataiter, num_shards=256, nmax=-1):
+    """Write a TFRecords dataset.
+
+    Args:
+        path (str): path to output directory
+        dataiter (generate): data iterator
+        num_shards (int, optional): number of TFRecords to create. Defaults to 256.
+        nmax (int, optional): max number of data elements to create. Defaults to -1 for all data.
+    """
     writers = [
         tf.python_io.TFRecordWriter(f"{path}{i:05d}_{num_shards:05d}.tfrecord")
         for i in range(num_shards)
@@ -130,6 +215,16 @@ def create_tfrecords(
     debug=False,
     data_type="trainval",
 ):
+    """Create a dataset of TFRecords for VAD.
+
+    Args:
+        data_dir (str): path to data directory
+        seq_len (int, optional): sub segment window length. Defaults to 1024.
+        split (str, optional): train / val split. Defaults to "0.7/0.15".
+        num_shards (int, optional): number of TFRecords to create. Defaults to 256.
+        debug (bool, optional): debug with a small amount of data. Defaults to False.
+        data_type (str, optional): dataset subsets to create. Defaults to "trainval".
+    """
     np.random.seed(0)
 
     output_path = os.path.join(data_dir, "tfrecords/")
@@ -175,6 +270,11 @@ def create_tfrecords(
 
 
 def main(_):
+    """Main function to create a TFRecords dataset for VAD.
+
+    Args:
+        _ ([type]): [description]
+    """
     create_tfrecords(
         FLAGS.data_dir,
         seq_len=FLAGS.seq_len,

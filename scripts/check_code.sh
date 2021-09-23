@@ -16,6 +16,8 @@ echo "> Running black"
 black . 
 echo "> Running flake8"
 flake8 .
+echo "> Running pep257"
+pep257 .
 
 echo
 echo "Code is ready to be pushed"

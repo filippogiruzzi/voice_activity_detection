@@ -1,3 +1,4 @@
+"""Utilitary functions to visualize audio signals."""
 import argparse
 import os
 
@@ -10,6 +11,14 @@ from vad.data_processing.data_iterator import read_json
 
 
 def plot_signal(sr, signal, labels, signal_id):
+    """Utilitary function to plot an audio signal.
+
+    Args:
+        sr (int): audio signal sampling rate
+        signal (np.ndarray): audio signal
+        labels (dict): dictionary of labels (0 or 1)
+        signal_id (str): signal id
+    """
     logger.info(
         f"Sampling rate = {sr} | Num. points = {len(signal)} | Tot. duration = {len(signal) / sr:.2f} s"
     )
@@ -33,6 +42,7 @@ def plot_signal(sr, signal, labels, signal_id):
 
 
 def main():
+    """Main function to visualize audio signals."""
     parser = argparse.ArgumentParser(description="visualize raw data")
     parser.add_argument(
         "--data-dir", type=str, default="/home/filippo/datasets/LibriSpeech/"

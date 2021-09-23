@@ -1,3 +1,4 @@
+"""TF Deep Learning model for VAD."""
 from __future__ import absolute_import, division, print_function
 
 import tensorflow as tf
@@ -13,7 +14,20 @@ from tensorflow.python.keras.models import Model
 
 
 class ResnetBlock(Model):
+    """Resnet1D block class.
+
+    Args:
+        Model (tf.python.keras.models.Model): TF Keras model class
+    """
+
     def __init__(self, n_filters, n_kernels, is_training=False):
+        """Initialize ResnetBlock class parameters.
+
+        Args:
+            n_filters (list): list of number of conv filters
+            n_kernels (list): list of number of conv kernels
+            is_training (bool, optional): training or not. Defaults to False.
+        """
         super(ResnetBlock, self).__init__()
 
         self.is_training = is_training
@@ -56,6 +70,16 @@ class ResnetBlock(Model):
         self.out_block = Activation(activation="relu", name="out_block")
 
     def call(self, inputs, training=None, mask=None):
+        """Build the TF graph.
+
+        Args:
+            inputs (tf.Tensor): model inputs
+            training (bool, optional): training or not. Defaults to None.
+            mask (bool, optional): [description]. Defaults to None.
+
+        Returns:
+            out_block (tf.Tensor): block output
+        """
         x = self.conv1(inputs)
         x = self.bn1(x)
         x = self.relu1(x)
@@ -75,7 +99,19 @@ class ResnetBlock(Model):
 
 
 class Resnet1D(Model):
+    """Resnet 1D model class.
+
+    Args:
+        Model (tf.python.keras.models.Model): TF Keras model class
+    """
+
     def __init__(self, params=None, is_training=False):
+        """Initialize Resnet1D class parameters.
+
+        Args:
+            params (dict, optional): dictionary of model parameters. Defaults to None.
+            is_training (bool, optional): training or not. Defaults to False.
+        """
         super(Resnet1D, self).__init__()
 
         self.is_training = is_training
@@ -86,16 +122,24 @@ class Resnet1D(Model):
 
         # Resnet Blocks
         self.block1 = ResnetBlock(
-            self.n_cnn_filters[0], self.n_cnn_kernels, is_training
+            self.n_cnn_filters[0],
+            self.n_cnn_kernels,
+            is_training,
         )
         self.block2 = ResnetBlock(
-            self.n_cnn_filters[1], self.n_cnn_kernels, is_training
+            self.n_cnn_filters[1],
+            self.n_cnn_kernels,
+            is_training,
         )
         self.block3 = ResnetBlock(
-            self.n_cnn_filters[2], self.n_cnn_kernels, is_training
+            self.n_cnn_filters[2],
+            self.n_cnn_kernels,
+            is_training,
         )
         self.block4 = ResnetBlock(
-            self.n_cnn_filters[2], self.n_cnn_kernels, is_training
+            self.n_cnn_filters[2],
+            self.n_cnn_kernels,
+            is_training,
         )
 
         # Flatten
@@ -107,6 +151,16 @@ class Resnet1D(Model):
         self.fc3 = Dense(self.n_classes, activation=None, name="fc3")
 
     def call(self, inputs, training=None, mask=None):
+        """Build the TF graph.
+
+        Args:
+            inputs (tf.Tensor): model inputs
+            training (bool, optional): training or not. Defaults to None.
+            mask (bool, optional): [description]. Defaults to None.
+
+        Returns:
+            output (tf.Tensor): model output
+        """
         signal_input = inputs["features_input"]
 
         with tf.name_scope("block1"):

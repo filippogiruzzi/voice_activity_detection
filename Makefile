@@ -33,7 +33,7 @@ build:
 	$(SCRIPTS)/docker_build.sh
 
 local: build
-	$(SCRIPTS)/docker_local.sh
+	$(SCRIPTS)/docker_local.sh $(ROOT)
 
 local-nobuild:
 	$(SCRIPTS)/docker_local.sh $(ROOT)

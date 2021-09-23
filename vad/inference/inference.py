@@ -1,3 +1,4 @@
+"""Main entrypoint to run VAD inference."""
 import os
 import time
 from collections import deque
@@ -28,6 +29,14 @@ FLAGS = flags.FLAGS
 
 
 def visualize_predictions(signal, fn, preds, sr=16000):
+    """Utilitary function to plot the audio signal with predictions.
+
+    Args:
+        signal (np.ndarray): audio signal
+        fn (str): file name
+        preds (np.ndarray): model predictions
+        sr (int, optional): audio signal sampling rate. Defaults to 16000.
+    """
     fig = plt.figure(figsize=(15, 10))
     sns.set()
     ax = fig.add_subplot(1, 1, 1)
@@ -44,6 +53,14 @@ def visualize_predictions(signal, fn, preds, sr=16000):
 
 
 def smooth_predictions(preds):
+    """Utilitary function to smooth predictions over time.
+
+    Args:
+        preds (np.ndarray): model predictions
+
+    Returns:
+        smoothed_preds (list): smoothed predictions
+    """
     smoothed_preds = []
     # Smooth with 3 consecutive windows
     for i in range(2, len(preds), 3):
@@ -73,6 +90,11 @@ def smooth_predictions(preds):
 
 
 def main(_):
+    """Main function to run VAD inference.
+
+    Args:
+        _ ([type]): [description]
+    """
     np.random.seed(0)
 
     # Directories

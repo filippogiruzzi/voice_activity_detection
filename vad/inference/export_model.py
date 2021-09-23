@@ -1,3 +1,4 @@
+"""Main entrypoint to export a TF trained model to inference format."""
 import argparse
 import logging
 import sys
@@ -10,21 +11,32 @@ from vad.training.input_pipeline import FEAT_SIZE
 
 
 def main():
+    """Main function to export a TF trained model to inference format."""
     parser = argparse.ArgumentParser(
         description="export trained TensorFlow model for inference"
     )
     parser.add_argument(
-        "--model-dir", type=str, default="", help="pretrained model directory"
+        "--model-dir",
+        type=str,
+        default="",
+        help="pretrained model directory",
     )
     parser.add_argument(
-        "--ckpt", type=str, default="", help="pretrained checkpoint directory"
+        "--ckpt",
+        type=str,
+        default="",
+        help="pretrained checkpoint directory",
     )
     parser.add_argument("--model", type=str, default="resnet1d", help="model name")
     parser.add_argument("--n-filters", type=str, default="32-64-128")
     parser.add_argument("--n-kernels", type=str, default="8-5-3")
     parser.add_argument("--n-fc-units", type=str, default="2048-2048")
     parser.add_argument(
-        "--n-classes", "-n", type=int, default=1, help="number of classes"
+        "--n-classes",
+        "-n",
+        type=int,
+        default=1,
+        help="number of classes",
     )
     args = parser.parse_args()
 

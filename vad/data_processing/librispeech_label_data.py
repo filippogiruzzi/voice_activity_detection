@@ -1,3 +1,7 @@
+"""Automatic data annotations for LibriSpeech dataset.
+
+Uses a pre-trained VAD model to annotate audio signal automatically.
+"""
 import json
 import os
 import time
@@ -33,6 +37,13 @@ FLAGS = flags.FLAGS
 
 
 def visualize_predictions(signal, fn, preds):
+    """Utilitary function to visualize predictions over audio signals.
+
+    Args:
+        signal (np.ndarray): audio signal
+        fn (str): file name
+        preds (np.ndarray): VAD predictions
+    """
     fig = plt.figure(figsize=(15, 10))
     sns.set()
     ax = fig.add_subplot(1, 1, 1)
@@ -51,6 +62,14 @@ def visualize_predictions(signal, fn, preds):
 
 
 def file_iter(data_dir):
+    """File iterator to loop over audio signal files.
+
+    Args:
+        data_dir (str): path to directory containing audio signal files
+
+    Yields:
+        signal, fn (np.ndarray, str): audio signal and file name
+    """
     for base_dir_id in os.listdir(data_dir):
         base_dir = os.path.join(data_dir, base_dir_id)
         for sub_dir_id in os.listdir(base_dir):
@@ -67,6 +86,11 @@ def file_iter(data_dir):
 
 
 def main(_):
+    """Main function to run automatic data annotation.
+
+    Args:
+        _ ([type]): [description]
+    """
     np.random.seed(0)
     file_it = file_iter(FLAGS.data_dir)
     if not tf.gfile.IsDirectory(FLAGS.out_dir):
