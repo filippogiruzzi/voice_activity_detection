@@ -9,7 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Run linter and tests
-        run: |
-          make check-test-docker
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Builder docker image, run linter & tests
+      run: |
+        make check-test-docker

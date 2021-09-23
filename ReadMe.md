@@ -60,6 +60,8 @@ $ docker pull filippogrz/tf-vad:latest
 $ docker run --rm --gpus all -v /var/run/docker.sock:/var/run/docker.sock -it --entrypoint /bin/bash -e TF_FORCE_GPU_ALLOW_GROWTH=true filippogrz/tf-vad
 ```
 
+If you want to build the docker image and run the container from scratch, run the following commands.
+
 Build the docker image:
 ```bash
 $ make build
