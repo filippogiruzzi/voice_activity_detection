@@ -1,7 +1,14 @@
 # Voice Activity Detection project
 
-Keywords: Python, TensorFlow, Deep Learning, 
-Time Series classification
+<p align="center">
+    <a href="#ci" alt="CI">
+        <img src="https://github.com/filippogiruzzi/voice_activity_detection/actions/workflows/ci.yml/badge.svg" /></a>
+    <a href="#ci" alt="CD">
+        <img src="https://github.com/filippogiruzzi/voice_activity_detection/actions/workflows/cd.yml/badge.svg" /></a>
+</p>
+
+<center>Keywords: Python, TensorFlow, Deep Learning, Time Series classification</center>
+
 
 ## Table of contents
 
