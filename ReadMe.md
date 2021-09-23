@@ -1,7 +1,14 @@
 # Voice Activity Detection project
 
-Keywords: Python, TensorFlow, Deep Learning, 
-Time Series classification
+<p align="center">
+    <a href="#ci" alt="CI">
+        <img src="https://github.com/filippogiruzzi/voice_activity_detection/actions/workflows/ci.yml/badge.svg" /></a>
+    <a href="#ci" alt="CD">
+        <img src="https://github.com/filippogiruzzi/voice_activity_detection/actions/workflows/cd.yml/badge.svg" /></a>
+</p>
+
+<center>Keywords: Python, TensorFlow, Deep Learning, Time Series classification</center>
+
 
 ## Table of contents
 
@@ -53,6 +60,14 @@ $ pip install -e .
 ## 1.2 Virtual environment installation
 
 ## 1.3 Docker installation
+
+You can pull the latest image from DockerHub and run Python commands inside the container:
+```bash
+$ docker pull filippogrz/tf-vad:latest
+$ docker run --rm --gpus all -v /var/run/docker.sock:/var/run/docker.sock -it --entrypoint /bin/bash -e TF_FORCE_GPU_ALLOW_GROWTH=true filippogrz/tf-vad
+```
+
+If you want to build the docker image and run the container from scratch, run the following commands.
 
 Build the docker image:
 ```bash
@@ -122,9 +137,7 @@ Skip this subsection if you already have the `labels/` folder, that contains ann
 from a different pre-trained model.
 
 ```bash
-$ python data_processing/librispeech_label_data.py --data_dir /path/to/LibriSpeech/test-clean/
-                                                    --exported_model /path/to/pretrained/model/
-                                                    --out_dir /path/to/LibriSpeech/labels/
+$ python data_processing/librispeech_label_data.py --data_dir /path/to/LibriSpeech/test-clean/ --exported_model /path/to/pretrained/model/ --out_dir /path/to/LibriSpeech/labels/
 ```
 
 This will record the annotations into `/path/to/LibriSpeech/labels/` as 
@@ -147,11 +160,8 @@ $ python training/train.py --data-dir /path/to/LibriSpeech/tfrecords/
 ### 5.4 Export trained model & run inference on Test set
 
 ```bash
-$ python inference/export_model.py --model-dir /path/to/trained/model/dir/
-                                    --ckpt /path/to/trained/model/dir/
-$ python inference/inference.py --data_dir /path/to/LibriSpeech/
-                                 --exported_model /path/to/exported/model/
-                                 --smoothing
+$ python inference/export_model.py --model-dir /path/to/trained/model/dir/ --ckpt /path/to/trained/model/dir/
+$ python inference/inference.py --data_dir /path/to/LibriSpeech/ --exported_model /path/to/exported/model/ --smoothing
 ```
 
 The trained model will be recorded in `/path/to/LibriSpeech/tfrecords/models/resnet1d/`. 
