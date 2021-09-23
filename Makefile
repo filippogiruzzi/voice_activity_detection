@@ -36,7 +36,7 @@ local: build
 	$(SCRIPTS)/docker_local.sh
 
 local-nobuild:
-	$(SCRIPTS)/docker_local.sh
+	$(SCRIPTS)/docker_local.sh $(ROOT)
 
 ##################################################
 #                    CI & tests                  #
