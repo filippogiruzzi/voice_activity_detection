@@ -1,10 +1,15 @@
 # Voice Activity Detection project
 
 <p align="center">
-    <a href="#ci" alt="CI">
+    <a href="https://github.com/filippogiruzzi/voice_activity_detection/actions/workflows/ci.yml" alt="CI">
         <img src="https://github.com/filippogiruzzi/voice_activity_detection/actions/workflows/ci.yml/badge.svg" /></a>
-    <a href="#ci" alt="CD">
+    <a href="https://github.com/filippogiruzzi/voice_activity_detection/actions/workflows/cd.yml" alt="CD">
         <img src="https://github.com/filippogiruzzi/voice_activity_detection/actions/workflows/cd.yml/badge.svg" /></a>
+</p>
+<p align="center">
+    <a href="https://github.com/filippogiruzzi/voice_activity_detection"><img src="https://img.shields.io/github/stars/filippogiruzzi/voice_activity_detection?logo=github" alt="GitHub stars"></a>
+    <a href="https://github.com/filippogiruzzi/voice_activity_detection"><img src="https://img.shields.io/github/forks/filippogiruzzi/voice_activity_detection?logo=github" alt="GitHub forks"></a>
+    <a href="https://hub.docker.com/repository/docker/filippogrz/tf-vad"><img src="https://img.shields.io/docker/pulls/filippogrz/tf-vad?logo=docker" alt="Docker Pulls"></a>
 </p>
 
 <center>Keywords: Python, TensorFlow, Deep Learning, Time Series classification</center>
