@@ -8,7 +8,7 @@ def extract_features(signal, freq=16000, n_mfcc=5, size=512, step=16):
 
     Args:
         signal (np.ndarray): audio signal
-        freq (int, optional): MFCC features frequency. Defaults to 16000.
+        freq (int, optional): MFCC features sampling rate. Defaults to 16000.
         n_mfcc (int, optional): number of MFCC features to extract. Defaults to 5.
         size (int, optional): MFCC features size. Defaults to 512.
         step (int, optional): MFCC features step. Defaults to 16.
