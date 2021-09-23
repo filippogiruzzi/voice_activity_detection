@@ -1,3 +1,4 @@
+"""Setup file to install VAD as a package."""
 from setuptools import find_packages, setup
 
 setup(
