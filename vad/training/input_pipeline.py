@@ -1,3 +1,4 @@
+"""Training TF input pipeline."""
 import argparse
 import glob
 import os
@@ -20,7 +21,27 @@ def get_dataset(
     shuffle=False,
     fake_input=False,
 ):
+    """Reads a TFRecord dataset and builds a TF dataset to feed to a TF model.
+
+    Args:
+        tfrecords (list): TFRecord files paths
+        batch_size (int): batch size
+        epochs (int): number of epochs
+        input_size (int, optional): sub audio segment window size. Defaults to 1024.
+        n_classes (int, optional): number of classes. Defaults to 1.
+        shuffle (bool, optional): shuffle dataset or not. Defaults to False.
+        fake_input (bool, optional): build a fake dataset for debugging. Defaults to False.
+    """
+
     def parse_func(example_proto):
+        """Parse a TF example to build TF inputs & labels.
+
+        Args:
+            example_proto (tf.core.example.example_pb2.Example): TF training example
+
+        Returns:
+            features, labels (dict, dict): dictionaries of input features & associated labels
+        """
         feature_dict = {
             "signal/id": tf.FixedLenFeature([], tf.string),
             "segment/start": tf.FixedLenFeature([], tf.int64),
@@ -84,6 +105,19 @@ def data_input_fn(
     shuffle=False,
     fake_input=False,
 ):
+    """Input pipeline function to feed to a TF estimator for training / evaluation.
+
+    Args:
+        tfrecords (list): TFRecord files paths
+        batch_size (int): batch size
+        epochs (int): number of epochs
+        input_size (int, optional): sub audio segment window size. Defaults to 1024.
+        n_classes (int, optional): number of classes. Defaults to 1.
+        subsample (bool, optional): subsample the signal or not. Defaults to False.
+        shuffle (bool, optional): shuffle dataset or not. Defaults to False.
+        fake_input (bool, optional): build a fake dataset for debugging. Defaults to False.
+    """
+
     def _input_fn():
         dataset = get_dataset(
             tfrecords, batch_size, epochs, input_size, n_classes, shuffle, fake_input
@@ -115,6 +149,7 @@ def data_input_fn(
 
 
 def main():
+    """Main function to visualize data through the TF data pipeline."""
     parser = argparse.ArgumentParser(description="visualize input pipeline")
     parser.add_argument(
         "--data-dir",
