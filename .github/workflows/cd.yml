@@ -1,4 +1,4 @@
-name: CD - deploy do DockerHub
+name: CD - deploy to DockerHub
 
 on:
   push:
