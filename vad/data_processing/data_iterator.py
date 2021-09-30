@@ -159,19 +159,19 @@ def slice_iter(data_dir, label_dir, files, seq_len=1024):
             }
 
 
-def main():
-    """Temporary main function. Should be move to tests."""
-    parser = argparse.ArgumentParser(description="data iterator to loop through data")
-    parser.add_argument(
-        "--data-dir", type=str, default="/home/filippo/datasets/LibriSpeech/"
-    )
-    args = parser.parse_args()
+def run_data_iterator(data_dir):
+    """Utilitary function to use the data iterator to loop through the raw data and compute some statistics.
 
-    data_dir = os.path.join(args.data_dir, "test-clean/")
-    label_dir = os.path.join(args.data_dir, "labels/")
+    Args:
+        data_dir (str): path to raw dataset directory
+    """
+    test_data_dir = os.path.join(data_dir, "test-clean/")
+    label_dir = os.path.join(data_dir, "labels/")
 
     train_fns, val_fns, test_fns = split_data(label_dir, split="0.7/0.15")
-    logger.info(f"Train: {train_fns} | Val: {val_fns} | Test: {test_fns}")
+    logger.info(
+        f"Train: {len(train_fns)} | Val: {len(val_fns)} | Test: {len(test_fns)}"
+    )
 
     # Some stats to get the number of noise & speech segments, min & max values
     data_dict = {"train": train_fns, "val": val_fns, "test": test_fns}
@@ -179,21 +179,8 @@ def main():
     to_print = []
     seq_len = 1024
     for data_type, data_files in data_dict.items():
-        data_it = slice_iter(data_dir, label_dir, data_files, seq_len)
+        data_it = slice_iter(test_data_dir, label_dir, data_files, seq_len)
         for data in data_it:
-            # print(data['file_id'],
-            #       data['label'],
-            #       data['start'],
-            #       data['end'],
-            #       data['sub_segment_id'],
-            #       data['sub_segment_len'])
-
-            # Drop 1/4th of speech signals to balance data
-            # if data['label'] == 1:
-            #     drop = np.random.randint(0, 4)
-            #     if drop > 0:
-            #         continue
-
             stats_dict[data_type][data["label"]] += 1
             mini, maxi = stats_dict[data_type][2:]
             if np.min(data["sub_segment"]) < mini:
@@ -212,20 +199,36 @@ def main():
             ]
         )
 
-    logger.info(
-        tabulate(
-            headers=[
-                "Data type",
-                "Seg. length",
-                "Num. noise",
-                "Num. speech",
-                "Min",
-                "Max",
-            ],
-            tabular_data=to_print,
-            tablefmt="simple",
-        )
+    tabulate_val = tabulate(
+        headers=[
+            "Data type",
+            "Seg. length",
+            "Num. noise",
+            "Num. speech",
+            "Min",
+            "Max",
+        ],
+        tabular_data=to_print,
+        tablefmt="simple",
     )
+    logger.info(f"\n{tabulate_val}")
+
+
+def main():
+    """Temporary main function. Should be move to tests."""
+    parser = argparse.ArgumentParser(
+        description="Loop through the raw data and compute some statistics."
+    )
+    parser.add_argument(
+        "--data-dir",
+        "-d",
+        type=str,
+        required=True,
+        help="Raw dataset directory path.",
+    )
+    args = parser.parse_args()
+
+    run_data_iterator(data_dir=args.data_dir)
 
 
 if __name__ == "__main__":
