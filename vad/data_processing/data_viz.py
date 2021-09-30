@@ -41,16 +41,14 @@ def plot_signal(sr, signal, labels, signal_id):
     plt.show()
 
 
-def main():
-    """Main function to visualize audio signals."""
-    parser = argparse.ArgumentParser(description="visualize raw data")
-    parser.add_argument(
-        "--data-dir", type=str, default="/home/filippo/datasets/LibriSpeech/"
-    )
-    args = parser.parse_args()
+def visualize_audio_signals(data_dir):
+    """Utilitary function to visualize audio signals with labels.
 
-    data_dir = os.path.join(args.data_dir, "test-clean/")
-    label_dir = os.path.join(args.data_dir, "labels/")
+    Args:
+        data_dir (str): path to raw dataset directory
+    """
+    test_data_dir = os.path.join(data_dir, "test-clean/")
+    label_dir = os.path.join(data_dir, "labels/")
 
     files = [x.split(".")[0] for x in os.listdir(label_dir) if "json" in x]
 
@@ -58,7 +56,7 @@ def main():
         # Read .flac
         logger.info("Reading .flac file ...")
         fn_ids = fn.split("-")
-        flac_fp = os.path.join(data_dir, fn_ids[0], fn_ids[1], f"{fn}.flac")
+        flac_fp = os.path.join(test_data_dir, fn_ids[0], fn_ids[1], f"{fn}.flac")
         signal, sr = sf.read(flac_fp)
 
         # Read .json
@@ -68,6 +66,23 @@ def main():
         # Plot
         logger.info("Plotting signal ...")
         plot_signal(sr, signal, labels, fn)
+
+
+def main():
+    """Main function to visualize audio signals."""
+    parser = argparse.ArgumentParser(
+        description="Visualize raw audio signals and labels."
+    )
+    parser.add_argument(
+        "--data-dir",
+        "-d",
+        type=str,
+        required=True,
+        help="Raw dataset directory path.",
+    )
+    args = parser.parse_args()
+
+    visualize_audio_signals(data_dir=args.data_dir)
 
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@
 
 Uses a pre-trained VAD model to annotate audio signal automatically.
 """
+import argparse
 import json
 import os
 import time
@@ -12,28 +13,9 @@ import numpy as np
 import seaborn as sns
 import soundfile as sf
 import tensorflow as tf
-from absl import app, flags
 from loguru import logger
 
 from vad.data_processing.feature_extraction import extract_features
-
-flags.DEFINE_string(
-    "data_dir",
-    "/home/filippo/datasets/LibriSpeech/test-clean/",
-    "path to data directory",
-)
-flags.DEFINE_string(
-    "out_dir",
-    "/home/filippo/datasets/LibriSpeech/labels/",
-    "output directory to record labels",
-)
-flags.DEFINE_string(
-    "exported_model",
-    "/home/filippo/datasets/vad_data/tfrecords/models/resnet1d/inference/exported/",
-    "path to pretrained TensorFlow exported model",
-)
-flags.DEFINE_boolean("viz", False, "visualize prediction")
-FLAGS = flags.FLAGS
 
 
 def visualize_predictions(signal, fn, preds):
@@ -85,16 +67,24 @@ def file_iter(data_dir):
                 yield signal, fn
 
 
-def main(_):
-    """Main function to run automatic data annotation.
+def automatic_labeling(data_dir, exported_model, visualize=False):
+    """Run automatic labeling over a given dataset of raw audio signals, given a pre-trained VAD model.
 
     Args:
-        _ ([type]): [description]
+        data_dir (str): path to raw dataset directory
+        exported_model (str): path to exported pre-trained TF model directory
+        visualize (bool, optional): option to visualize automatic labeling. Defaults to False.
     """
     np.random.seed(0)
-    file_it = file_iter(FLAGS.data_dir)
-    if not tf.gfile.IsDirectory(FLAGS.out_dir):
-        tf.gfile.MakeDirs(FLAGS.out_dir)
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+    tf.logging.set_verbosity(tf.logging.INFO)
+
+    test_data_dir = os.path.join(data_dir, "test-clean/")
+    labels_dir = os.path.join(data_dir, "labels/")
+
+    file_it = file_iter(test_data_dir)
+    if not tf.gfile.IsDirectory(labels_dir):
+        tf.gfile.MakeDirs(labels_dir)
 
     # TensorFlow inputs
     features_input_ph = tf.placeholder(shape=(16, 65), dtype=tf.float32)
@@ -102,9 +92,7 @@ def main(_):
     features_input_op = tf.expand_dims(features_input_op, axis=0)
 
     # TensorFlow exported model
-    speech_predictor = tf.contrib.predictor.from_saved_model(
-        export_dir=FLAGS.exported_model
-    )
+    speech_predictor = tf.contrib.predictor.from_saved_model(export_dir=exported_model)
     init = tf.initializers.global_variables()
     classes = ["Noise", "Speech"]
 
@@ -142,7 +130,7 @@ def main(_):
                 end = time.time()
                 dt = end - start
                 pred_time.append(dt)
-                if FLAGS.viz:
+                if visualize:
                     logger.info(
                         f"Prediction = {speech_pred} | proba = {speech_prob[0]:.2f} | time = {dt:.2f} s"
                     )
@@ -163,23 +151,53 @@ def main(_):
             logger.info(f"Average prediction time = {np.mean(pred_time) * 1e3:.2f} ms")
 
             # Visualization
-            if FLAGS.viz:
+            if visualize:
                 visualize_predictions(signal, fn, preds)
 
             # Record labels to .json
-            if not FLAGS.viz:
+            if not visualize:
                 base_name = fn.split(".")[0]
                 out_fn = f"{base_name}.json"
-                out_fp = os.path.join(FLAGS.out_dir, out_fn)
+                out_fp = os.path.join(labels_dir, out_fn)
                 with open(out_fp, "w") as f:
                     json.dump(labels, f)
 
                 nb_preds = len(labels["speech_segments"])
-                output_dir = FLAGS.out_dir
-                logger.info(f"{nb_preds} predictions recorded to {output_dir}")
+                logger.info(f"{nb_preds} predictions recorded to {labels_dir}")
+
+
+def main(_):
+    """Main function to run automatic data annotation."""
+    parser = argparse.ArgumentParser(
+        description="Run Voice Activity Detection CNN inference over audio signals."
+    )
+    parser.add_argument(
+        "--data-dir",
+        "-d",
+        type=str,
+        required=True,
+        help="Raw dataset directory path.",
+    )
+    parser.add_argument(
+        "--exported-model",
+        type=str,
+        required=True,
+        help="Path to pre-trained exported TF model.",
+    )
+    parser.add_argument(
+        "--visualize",
+        action="store_true",
+        default=False,
+        help="Visualize automatic labeling.",
+    )
+    args = parser.parse_args()
+
+    automatic_labeling(
+        data_dir=args.data_dir,
+        exported_model=args.exported_model,
+        visualize=args.visualize,
+    )
 
 
 if __name__ == "__main__":
-    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-    tf.logging.set_verbosity(tf.logging.INFO)
-    app.run(main)
+    main()

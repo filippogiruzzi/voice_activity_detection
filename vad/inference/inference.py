@@ -1,4 +1,5 @@
 """Main entrypoint to run VAD inference."""
+import argparse
 import os
 import time
 from collections import deque
@@ -7,25 +8,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import tensorflow as tf
-from absl import app, flags
 from loguru import logger
 
 from vad.data_processing.data_iterator import file_iter, split_data
 from vad.data_processing.feature_extraction import extract_features
 from vad.training.input_pipeline import FEAT_SIZE
-
-flags.DEFINE_string(
-    "data_dir", "/home/filippo/datasets/LibriSpeech/", "path to data directory"
-)
-flags.DEFINE_string(
-    "exported_model",
-    "/home/filippo/datasets/LibriSpeech/tfrecords/models/resnet1d/inference/exported/",
-    "path to pretrained TensorFlow exported model",
-)
-flags.DEFINE_integer("seq_len", 1024, "sequence length for speech prediction")
-flags.DEFINE_integer("stride", 1, "stride for sliding window prediction")
-flags.DEFINE_boolean("smoothing", False, "apply smoothing feature")
-FLAGS = flags.FLAGS
 
 
 def visualize_predictions(signal, fn, preds, sr=16000):
@@ -89,20 +76,28 @@ def smooth_predictions(preds):
     return smoothed_preds
 
 
-def main(_):
-    """Main function to run VAD inference.
+def run_inference(params, data_dir, exported_model):
+    """Run Voice Activity Detection CNN inference over raw audio signals.
 
     Args:
-        _ ([type]): [description]
+        params (dict): dictionary of inference parameters
+        data_dir (str): path to raw dataset directory
+        exported_model (str): path to exported pre-trained TF model directory
     """
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+    tf.logging.set_verbosity(tf.logging.INFO)
     np.random.seed(0)
 
+    input_size = params["input_size"]
+    stride = params["stride"]
+    smoothing = params["smoothing"]
+
     # Directories
-    data_dir = os.path.join(FLAGS.data_dir, "test-clean/")
-    label_dir = os.path.join(FLAGS.data_dir, "labels/")
+    test_data_dir = os.path.join(data_dir, "test-clean/")
+    label_dir = os.path.join(data_dir, "labels/")
 
     _, _, test = split_data(label_dir, split="0.7/0.15", random_seed=0)
-    file_it = file_iter(data_dir, label_dir, files=test)
+    file_it = file_iter(test_data_dir, label_dir, files=test)
 
     # TensorFlow inputs
     features_input_ph = tf.placeholder(shape=FEAT_SIZE, dtype=tf.float32)
@@ -110,9 +105,7 @@ def main(_):
     features_input_op = tf.expand_dims(features_input_op, axis=0)
 
     # TensorFlow exported model
-    speech_predictor = tf.contrib.predictor.from_saved_model(
-        export_dir=FLAGS.exported_model
-    )
+    speech_predictor = tf.contrib.predictor.from_saved_model(export_dir=exported_model)
     init = tf.initializers.global_variables()
     classes = ["Noise", "Speech"]
 
@@ -121,10 +114,10 @@ def main(_):
         for signal, labels, fn in file_it:
             sess.run(init)
             logger.info(f"Prediction on file {fn} ...")
-            signal_input = deque(signal[: FLAGS.seq_len].tolist(), maxlen=FLAGS.seq_len)
+            signal_input = deque(signal[:input_size].tolist(), maxlen=input_size)
 
             preds, pred_time = [], []
-            pointer = FLAGS.seq_len
+            pointer = input_size
             while pointer < len(signal):
                 start = time.time()
                 # Preprocess signal & extract features
@@ -152,27 +145,74 @@ def main(_):
                 )
 
                 # For visualization
-                preds.append([pointer - FLAGS.seq_len, pointer, np.round(speech_prob)])
+                preds.append([pointer - input_size, pointer, np.round(speech_prob)])
 
                 # Update signal segment
                 signal_input.extend(
-                    signal[
-                        pointer + FLAGS.stride : pointer + FLAGS.stride + FLAGS.seq_len
-                    ]
+                    signal[pointer + stride : pointer + stride + input_size]
                 )
-                pointer += FLAGS.seq_len + FLAGS.stride
+                pointer += input_size + stride
 
             logger.info(f"Average prediction time = {np.mean(pred_time) * 1e3:.2f} ms")
 
             # Smoothing & hangover
-            if FLAGS.smoothing:
+            if smoothing:
                 preds = smooth_predictions(preds)
 
             # Visualization
             visualize_predictions(signal, fn, preds)
 
 
+def main():
+    """Main function to run VAD inference."""
+    parser = argparse.ArgumentParser(
+        description="Run Voice Activity Detection CNN inference over audio signals."
+    )
+    parser.add_argument(
+        "--data-dir",
+        "-d",
+        type=str,
+        required=True,
+        help="Raw dataset directory path.",
+    )
+    parser.add_argument(
+        "--exported-model",
+        type=str,
+        required=True,
+        help="Path to pre-trained exported TF model.",
+    )
+    parser.add_argument(
+        "--input-size",
+        type=int,
+        default=1024,
+        help="Audio signal input size.",
+    )
+    parser.add_argument(
+        "--stride",
+        type=int,
+        default=1,
+        help="Stride for sliding window prediction.",
+    )
+    parser.add_argument(
+        "--smoothing",
+        action="store_true",
+        default=False,
+        help="Smooth output predictions time series.",
+    )
+    args = parser.parse_args()
+
+    params = {
+        "input_size": args.input_size,
+        "stride": args.stride,
+        "smoothing": args.smoothing,
+    }
+
+    run_inference(
+        params=params,
+        data_dir=args.data_dir,
+        exported_model=args.exported_model,
+    )
+
+
 if __name__ == "__main__":
-    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-    tf.logging.set_verbosity(tf.logging.INFO)
-    app.run(main)
+    main()

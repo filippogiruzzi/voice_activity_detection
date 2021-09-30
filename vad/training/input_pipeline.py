@@ -120,7 +120,13 @@ def data_input_fn(
 
     def _input_fn():
         dataset = get_dataset(
-            tfrecords, batch_size, epochs, input_size, n_classes, shuffle, fake_input
+            tfrecords,
+            batch_size,
+            epochs,
+            input_size,
+            n_classes,
+            shuffle,
+            fake_input,
         )
 
         it = dataset.make_one_shot_iterator()
@@ -148,28 +154,24 @@ def data_input_fn(
     return _input_fn
 
 
-def main():
-    """Main function to visualize data through the TF data pipeline."""
-    parser = argparse.ArgumentParser(description="visualize input pipeline")
-    parser.add_argument(
-        "--data-dir",
-        "-d",
-        type=str,
-        default="/home/filippo/datasets/LibriSpeech/tfrecords/",
-    )
-    parser.add_argument("--n-classes", "-n", type=int, default=1)
-    parser.add_argument("--data-type", "-t", type=str, default="train")
-    args = parser.parse_args()
+def visualize_input_pipeline(data_dir, data_type="train", n_classes=1):
+    """Utilitary function to visualize the data through the TF input pipeline.
+
+    Args:
+        data_dir (str): path to TFRecords dataset directory
+        data_type (str, optional): dataset subset to visualize. Defaults to "train"
+        n_classes (int, optional): number of output classes. Defaults to 1
+    """
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
     classes = ["Noise", "Speech"]
-    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-    tfrecords = glob.glob(f"{args.data_dir}{args.data_type}/*.tfrecord")
+    tfrecords = glob.glob(f"{data_dir}{data_type}/*.tfrecord")
     dataset = get_dataset(
         tfrecords,
         batch_size=32,
         epochs=1,
         input_size=1024,
-        n_classes=args.n_classes,
+        n_classes=n_classes,
         shuffle=False,
         fake_input=False,
     )
@@ -214,6 +216,43 @@ def main():
 
     except tf.errors.OutOfRangeError:
         pass
+
+
+def main():
+    """Main function to visualize data through the TF data pipeline."""
+    parser = argparse.ArgumentParser(
+        description="Visualize data through the TF input pipeline."
+    )
+    parser.add_argument(
+        "--data-dir",
+        "-d",
+        type=str,
+        required=True,
+        help="TFRecords dataset directory path.",
+    )
+    parser.add_argument(
+        "--n-classes",
+        "-n",
+        type=int,
+        default=1,
+        choices=[1],
+        help="Number of output classes.",
+    )
+    parser.add_argument(
+        "--data-type",
+        "-t",
+        type=str,
+        default="train",
+        choices=["train", "val", "test"],
+        help="Dataset subset to visualize.",
+    )
+    args = parser.parse_args()
+
+    visualize_input_pipeline(
+        data_dir=args.data_dir,
+        data_type=args.data_type,
+        n_classes=args.n_classes,
+    )
 
 
 if __name__ == "__main__":

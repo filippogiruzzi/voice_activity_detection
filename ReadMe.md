@@ -142,7 +142,7 @@ Skip this subsection if you already have the `labels/` folder, that contains ann
 from a different pre-trained model.
 
 ```bash
-$ python data_processing/librispeech_label_data.py --data_dir /path/to/LibriSpeech/test-clean/ --exported_model /path/to/pretrained/model/ --out_dir /path/to/LibriSpeech/labels/
+$ python data_processing/librispeech_label_data.py --data-dir /path/to/LibriSpeech/test-clean/ --exported-model /path/to/pretrained/model/
 ```
 
 This will record the annotations into `/path/to/LibriSpeech/labels/` as 
@@ -151,7 +151,7 @@ This will record the annotations into `/path/to/LibriSpeech/labels/` as
 ### 5.2 Record raw data to .tfrecord format
 
 ```bash
-$ python data_processing/data_to_tfrecords.py --data_dir /path/to/LibriSpeech/
+$ python data_processing/data_to_tfrecords.py --data-dir /path/to/LibriSpeech/
 ```
 
 This will record the splitted data to `.tfrecord` format in `/path/to/LibriSpeech/tfrecords/`
@@ -165,8 +165,8 @@ $ python training/train.py --data-dir /path/to/LibriSpeech/tfrecords/
 ### 5.4 Export trained model & run inference on Test set
 
 ```bash
-$ python inference/export_model.py --model-dir /path/to/trained/model/dir/ --ckpt /path/to/trained/model/dir/
-$ python inference/inference.py --data_dir /path/to/LibriSpeech/ --exported_model /path/to/exported/model/ --smoothing
+$ python inference/export_model.py --model-dir /path/to/trained/model/dir/
+$ python inference/inference.py --data-dir /path/to/LibriSpeech/ --exported-model /path/to/exported/model/ --smoothing
 ```
 
 The trained model will be recorded in `/path/to/LibriSpeech/tfrecords/models/resnet1d/`. 
