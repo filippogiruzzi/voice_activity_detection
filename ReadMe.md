@@ -166,7 +166,7 @@ $ python training/train.py --data-dir /path/to/LibriSpeech/tfrecords/
 
 ```bash
 $ python inference/export_model.py --model-dir /path/to/trained/model/dir/
-$ python inference/inference.py --data_dir /path/to/LibriSpeech/ --exported_model /path/to/exported/model/ --smoothing
+$ python inference/inference.py --data_-dir /path/to/LibriSpeech/ --exported-model /path/to/exported/model/ --smoothing
 ```
 
 The trained model will be recorded in `/path/to/LibriSpeech/tfrecords/models/resnet1d/`. 
