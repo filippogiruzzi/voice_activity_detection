@@ -1,28 +1,16 @@
 """Converts raw audio signal to a dataset of TFRecords for training."""
+import argparse
 import multiprocessing
 import os
 from copy import deepcopy
 
 import numpy as np
 import tensorflow as tf
-from absl import app, flags
 from loguru import logger
 from tqdm import tqdm
 
 from vad.data_processing.data_iterator import slice_iter, split_data
 from vad.data_processing.feature_extraction import extract_features
-
-flags.DEFINE_string(
-    "data_dir", "/home/filippo/datasets/LibriSpeech/", "data directory path"
-)
-flags.DEFINE_string("data_split", "0.7/0.15", "train/val split")
-flags.DEFINE_integer("seq_len", 1024, "segment length")
-flags.DEFINE_integer("num_shards", 256, "number of tfrecord files")
-flags.DEFINE_boolean("debug", False, "debug for a few samples")
-flags.DEFINE_string("data_type", "trainvaltest", "data types to write into tfrecords")
-
-FLAGS = flags.FLAGS
-tf.logging.set_verbosity(tf.logging.INFO)
 
 
 def int64_feature(value):
@@ -207,43 +195,39 @@ def write_tfrecords(path, dataiter, num_shards=256, nmax=-1):
     logger.info(f"Recorded {counter} signals")
 
 
-def create_tfrecords(
-    data_dir,
-    seq_len=1024,
-    split="0.7/0.15",
-    num_shards=256,
-    debug=False,
-    data_type="trainval",
-):
+def create_tfrecords(params, data_dir, debug=False):
     """Create a dataset of TFRecords for VAD.
 
     Args:
+        params (dict): dataset parameters
         data_dir (str): path to data directory
-        seq_len (int, optional): sub segment window length. Defaults to 1024.
-        split (str, optional): train / val split. Defaults to "0.7/0.15".
-        num_shards (int, optional): number of TFRecords to create. Defaults to 256.
         debug (bool, optional): debug with a small amount of data. Defaults to False.
-        data_type (str, optional): dataset subsets to create. Defaults to "trainval".
     """
+    tf.logging.set_verbosity(tf.logging.INFO)
     np.random.seed(0)
 
     output_path = os.path.join(data_dir, "tfrecords/")
     if not tf.gfile.IsDirectory(output_path):
         tf.gfile.MakeDirs(output_path)
 
+    input_size = params["input_size"]
+    data_split = params["data_split"]
+    num_shards = params["num_shards"]
+    data_type = params["data_type"]
+
     # Data & label directories
     label_dir = os.path.join(data_dir, "labels/")
     data_dir = os.path.join(data_dir, "test-clean/")
 
     # Split data on files
-    train, val, test = split_data(label_dir, split, random_seed=0)
+    train, val, test = split_data(label_dir, data_split, random_seed=0)
 
     tot_files = len(train) + len(val) + len(test)
     logger.info(f"Total files: {tot_files}")
     logger.info(f"Train/val/test split: {len(train)}/{len(val)}/{len(test)}")
-    train_it = slice_iter(data_dir, label_dir, train, seq_len)
-    val_it = slice_iter(data_dir, label_dir, val, seq_len)
-    test_it = slice_iter(data_dir, label_dir, test, seq_len)
+    train_it = slice_iter(data_dir, label_dir, train, input_size)
+    val_it = slice_iter(data_dir, label_dir, val, input_size)
+    test_it = slice_iter(data_dir, label_dir, test, input_size)
 
     # Write data to tfrecords format
     nmax = 100 if debug else -1
@@ -269,22 +253,60 @@ def create_tfrecords(
         write_tfrecords(test_path, test_it, num_shards, nmax=nmax)
 
 
-def main(_):
-    """Main function to create a TFRecords dataset for VAD.
-
-    Args:
-        _ ([type]): [description]
-    """
-    create_tfrecords(
-        FLAGS.data_dir,
-        seq_len=FLAGS.seq_len,
-        split=FLAGS.data_split,
-        num_shards=FLAGS.num_shards,
-        debug=FLAGS.debug,
-        data_type=FLAGS.data_type,
+def main():
+    """Main function to create a TFRecords dataset for VAD."""
+    parser = argparse.ArgumentParser(
+        description="Create a TFRecords dataset to train VAD TF models."
     )
+    parser.add_argument(
+        "--data-dir",
+        "-d",
+        type=str,
+        required=True,
+        help="Raw dataset directory path.",
+    )
+    parser.add_argument(
+        "--input-size",
+        type=int,
+        default=1024,
+        help="Audio signal input size.",
+    )
+    parser.add_argument(
+        "--data-split",
+        type=str,
+        default="0.7/0.15",
+        help="Train / val dataset split ratios.",
+    )
+    parser.add_argument(
+        "--num-shards",
+        type=int,
+        default=256,
+        help="Number of TFRecords files to create.",
+    )
+    parser.add_argument(
+        "--data-type",
+        type=str,
+        default=["train", "val", "test"],
+        help="Dataset subsets to create.",
+        nargs="+",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        default=False,
+        help="Option to debug for a tiny dataset size.",
+    )
+    args = parser.parse_args()
+
+    params = {
+        "input_size": args.input_size,
+        "data_split": args.data_split,
+        "num_shards": args.num_shards,
+        "data_type": args.data_type,
+    }
+
+    create_tfrecords(params=params, data_dir=args.data_dir, debug=args.debug)
 
 
 if __name__ == "__main__":
-    tf.logging.set_verbosity(tf.logging.INFO)
-    app.run(main)
+    main()

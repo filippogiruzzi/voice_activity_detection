@@ -42,6 +42,11 @@ def plot_signal(sr, signal, labels, signal_id):
 
 
 def visualize_audio_signals(data_dir):
+    """Utilitary function to visualize audio signals with labels.
+
+    Args:
+        data_dir (str): path to raw dataset directory
+    """
     test_data_dir = os.path.join(data_dir, "test-clean/")
     label_dir = os.path.join(data_dir, "labels/")
 
