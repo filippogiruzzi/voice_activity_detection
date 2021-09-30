@@ -165,7 +165,7 @@ $ python training/train.py --data-dir /path/to/LibriSpeech/tfrecords/
 ### 5.4 Export trained model & run inference on Test set
 
 ```bash
-$ python inference/export_model.py --model-dir /path/to/trained/model/dir/ --ckpt /path/to/trained/model/dir/
+$ python inference/export_model.py --model-dir /path/to/trained/model/dir/
 $ python inference/inference.py --data_dir /path/to/LibriSpeech/ --exported_model /path/to/exported/model/ --smoothing
 ```
 
