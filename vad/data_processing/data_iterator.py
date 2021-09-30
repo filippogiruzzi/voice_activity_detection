@@ -4,6 +4,7 @@ Global data iterator that reads & pre-processed input data to be recorded as a T
 import argparse
 import json
 import os
+from pathlib import Path
 
 import numpy as np
 import soundfile as sf
@@ -26,7 +27,7 @@ def split_data(label_dir, split="0.7/0.15", random_seed=0):
     splits = [float(x) for x in split.split("/")]
     assert sum(splits) < 1.0, "Wrong split values"
 
-    files = [fn.split(".")[0] for fn in os.listdir(label_dir) if "json" in fn]
+    files = [fn.stem for fn in Path(label_dir).glob("*.json")]
     np.random.shuffle(files)
 
     n_train, n_val = int(len(files) * splits[0]), int(len(files) * splits[1])
