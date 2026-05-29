@@ -2,7 +2,7 @@ name: CD - deploy to DockerHub
 
 on:
   push:
-    branches: [master, main]
+    branches: [master, main, refactor/migrate-to-pytorch-and-simplify-architecture]
 
 jobs:
   deploy:
