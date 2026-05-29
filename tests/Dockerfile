@@ -1,10 +1,6 @@
+# syntax=docker/dockerfile:1
 FROM vad:latest
 
-COPY requirements.txt .
+WORKDIR /app
 
-RUN pip install -r requirements.txt 
-
-WORKDIR /voice_activity_detection
-COPY . .
-
-CMD ["bash", "-c", "isort --check ./ && black --check ./ && flake8 ./ && pep257 ./"]
+CMD ["sh", "-c", "uv run ruff check . && uv run ruff format --check . && uv run pytest"]

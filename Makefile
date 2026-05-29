@@ -3,6 +3,29 @@ SCRIPTS := $(ROOT)scripts
 
 
 ##################################################
+#                    Setup                       #
+##################################################
+install:
+	uv sync
+
+##################################################
+#                 Code formatting                #
+##################################################
+lint:
+	uv run ruff check .
+	uv run ruff format --check .
+
+format:
+	uv run ruff format .
+	uv run ruff check --fix .
+
+##################################################
+#                    Tests                       #
+##################################################
+test:
+	uv run pytest --cov=vad --cov-report=term-missing --cov-report=html
+
+##################################################
 #   Clean docker images, containers & pycache    #
 ##################################################
 clean-docker-images:
@@ -16,15 +39,9 @@ clean-docker-containers:
 clean-docker: clean-docker-containers clean-docker-images
 
 clean-py:
-	find . -type d -name "__pycache__" | xargs sudo rm -vrf --
+	find . -type d -name "__pycache__" | xargs rm -rf
 
 clean: clean-docker clean-py
-
-##################################################
-#                 Code formatting                #
-##################################################
-check-code:
-	$(SCRIPTS)/check_code.sh
 
 ##################################################
 #                 Docker commands                #
@@ -32,11 +49,14 @@ check-code:
 build:
 	$(SCRIPTS)/docker_build.sh
 
+build-gpu:
+	$(SCRIPTS)/docker_build.sh --build-arg BASE_IMAGE=nvidia/cuda:12.4.1-runtime-ubuntu22.04
+
 local: build
-	$(SCRIPTS)/docker_local.sh $(ROOT)
+	$(SCRIPTS)/docker_local.sh
 
 local-nobuild:
-	$(SCRIPTS)/docker_local.sh $(ROOT)
+	$(SCRIPTS)/docker_local.sh
 
 ##################################################
 #                    CI & tests                  #

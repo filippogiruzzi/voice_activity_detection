@@ -142,3 +142,16 @@ cython_debug/
 
 # Misc
 .idea/
+
+# PyTorch artifacts
+*.pt
+*.pth
+!tests/fixtures/*.pt
+
+# TensorBoard
+runs/
+logs/
+
+# Data
+*.tfrecord
+dataset/

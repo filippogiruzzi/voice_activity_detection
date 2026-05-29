@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build . -t vad
+docker build "$@" -t vad .
