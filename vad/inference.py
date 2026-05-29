@@ -21,25 +21,35 @@ def load_model(
     checkpoint: str | Path,
     config: ModelConfig | None = None,
     device: torch.device | None = None,
-) -> Resnet1D:
-    """Load a trained ``Resnet1D`` from a state-dict checkpoint in eval mode.
+) -> torch.nn.Module:
+    """Load a trained VAD model in eval mode from a checkpoint.
+
+    Supports both a plain ``state_dict`` checkpoint (rebuilt into a
+    ``Resnet1D`` using ``config``) and a serialized TorchScript archive
+    (loaded directly with ``torch.jit.load``).
 
     Args:
-        checkpoint: Path to a saved ``state_dict``.
-        config: Model architecture used to rebuild the network. Must match the
-            architecture used to train ``checkpoint``. Defaults to
+        checkpoint: Path to a saved ``state_dict`` or TorchScript archive.
+        config: Model architecture used to rebuild the network from a
+            ``state_dict``. Must match the architecture used to train
+            ``checkpoint``. Ignored for TorchScript archives. Defaults to
             ``ModelConfig()`` when omitted.
         device: Target device. Defaults to CUDA when available, else CPU.
 
     Returns:
-        The reconstructed model on ``device`` in evaluation mode.
+        The model on ``device`` in evaluation mode.
     """
-    config = config or ModelConfig()
     device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = Resnet1D(config)
-    state_dict = torch.load(checkpoint, map_location=device, weights_only=True)
-    model.load_state_dict(state_dict)
-    model.to(device)
+
+    try:
+        model = torch.jit.load(str(checkpoint), map_location=device)
+    except RuntimeError:
+        config = config or ModelConfig()
+        model = Resnet1D(config)
+        state_dict = torch.load(checkpoint, map_location=device, weights_only=True)
+        model.load_state_dict(state_dict)
+        model.to(device)
+
     model.eval()
     return model
 
