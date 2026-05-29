@@ -1,12 +1,10 @@
 #!/bin/bash
 
-ROOT=$1
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(dirname "$SCRIPT_DIR")"
 
 docker run --rm \
-		--gpus all \
-		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v $ROOT:/voice_activity_detection \
-		-it \
-		--entrypoint /bin/bash \
-		-e TF_FORCE_GPU_ALLOW_GROWTH=true \
-		vad
+    -v "$ROOT":/app \
+    -it \
+    --entrypoint /bin/bash \
+    vad
